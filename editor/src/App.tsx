@@ -13,8 +13,11 @@ import { TypographyPage } from './pages/TypographyPage'
 import { EffectsPage } from './pages/EffectsPage'
 
 function App() {
+  // Use Vite's BASE_URL so dev uses "/" and production (demo) uses "/FCStyle/"
+  const basename = (import.meta as any).env?.BASE_URL?.replace(/\/+$/, '') || ''
+
   return (
-    <Router>
+    <Router basename={basename}>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

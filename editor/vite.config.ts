@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
+  // Ensure correct base when hosted on GitHub Pages at /FCStyle/
+  base: command === 'build' ? '/FCStyle/' : '/',
   plugins: [react()],
   resolve: {
     alias: {
