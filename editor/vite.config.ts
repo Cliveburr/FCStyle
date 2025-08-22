@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+// Use URL to resolve paths in ESM without requiring Node type defs
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
@@ -7,7 +8,12 @@ export default defineConfig(({ command, mode }) => ({
   resolve: {
     alias: {
       '@': '/src',
+      // Resolve the local built library to avoid pulling a second installed copy
+      // ESM-safe __dirname
+      'fcstyle': new URL('../project/dist/index.esm.js', import.meta.url).pathname,
     },
+    // Avoid duplicated React instances when consuming the built library
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
   },
   css: {
     preprocessorOptions: {
@@ -17,6 +23,4 @@ export default defineConfig(({ command, mode }) => ({
       },
     },
   },
-  // Define o "base" apenas no momento do build
-  base: command === 'build' ? '/FCStyle/' : '/',
 }));

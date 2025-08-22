@@ -7,13 +7,13 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "demo": "vite build --outDir ../docs"
+    "demo": "vite build --outDir=\"../docs\" --base=\"/FCStyle\" --emptyOutDir --sourcemap"
   },
   "dependencies": {
+    "fcstyle": "file:../project",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.1",
-    "fcstyle": "file:../project"
+    "react-router-dom": "^7.8.1"
   },
   "devDependencies": {
     "@types/react": "^19.1.10",
