@@ -47,7 +47,7 @@ O editor permite:
 Acesse em: http://localhost:5173 após executar `npm run dev:editor`
 # FCStyle
 
-[🔗 Veja a demonstração no GitHub Pages](https://cliveburr.github.io/FCStyle/demo/)
+[🔗 Veja a demonstração no GitHub Pages](https://cliveburr.github.io/FCStyle/docs/)
 
 Framework CSS em React para ser utilizado por outros projetos React.
 
