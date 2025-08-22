@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "demo": "vite build --outDir ../docs"
   },
   "dependencies": {
     "react": "^19.1.1",

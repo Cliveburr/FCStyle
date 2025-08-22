@@ -18,5 +18,5 @@ export default defineConfig(({ command, mode }) => ({
     },
   },
   // Define o "base" apenas no momento do build
-  base: command === 'build' ? '/fcstyle/docs/' : '/',
+  base: command === 'build' ? '/fcstyle/' : '/',
 }));
