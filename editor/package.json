@@ -2,6 +2,7 @@
   "name": "fcstyle-editor",
   "version": "1.0.0",
   "description": "Editor para customizar variáveis CSS do FCStyle framework",
+  "homepage": "https://cliveburr.github.io/fcstyle/docs",
   "type": "module",
   "scripts": {
     "start": "vite",
