@@ -5,7 +5,7 @@ import { Icon } from './Icon';
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,
   BorderShortcuts, ColorShortcuts, FlexChildrenShortcuts, MarginShortcuts, SizeShortcuts {
 
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 
@@ -51,7 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
   const buttonContent = (
     <>
       {resolvedLeftIcon && <Icon icon={resolvedLeftIcon} />}
-      {children}
+      {children && <span>{children}</span>}
       {resolvedRightIcon && <Icon icon={resolvedRightIcon} />}
     </>
   );

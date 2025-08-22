@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import ButtonPage from './pages/components/ButtonPage'
+import { DropdownPage } from './pages/components/DropdownPage'
 import MenuPage from './pages/components/MenuPage'
 import ColumnPage from './pages/grid/ColumnPage'
 import RowPage from './pages/grid/RowPage'
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/typography" element={<TypographyPage />} />
           <Route path="/components/button" element={<ButtonPage />} />
+          <Route path="/components/dropdown" element={<DropdownPage />} />
           <Route path="/components/menu" element={<MenuPage />} />
           <Route path="/grid/place" element={<PlacePage />} />
           <Route path="/grid/column" element={<ColumnPage />} />

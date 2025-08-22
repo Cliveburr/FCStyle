@@ -16,7 +16,7 @@ const MenuPage: React.FC = () => {
 
   return (
     <Columns gap m>
-      <Place w5>
+      <Place w4>
         <h3>Menu Vertical</h3>
         <Menu b white sh3 selectedValue={selectedValue} onItemSelect={handleItemSelect}>
           <ListLabel>Seção Principal</ListLabel>
@@ -45,7 +45,7 @@ const MenuPage: React.FC = () => {
         </Menu>
       </Place>
 
-      <div>
+      <Place w4>
         <h3>Menu Horizontal</h3>
         <Menu 
           horizontal
@@ -61,9 +61,9 @@ const MenuPage: React.FC = () => {
             <ListItem value="docs" li="book">Documentação</ListItem>
           </ListSubList>
         </Menu>
-      </div>
+      </Place>
 
-      <div>
+      <Place w4>
         <h3>Menu com Ícones e Estados</h3>
         <Menu selectedValue={selectedValue} onItemSelect={handleItemSelect}>
           <ListItem value="new" li="plus" ri="keyboard">Novo (Ctrl+N)</ListItem>
@@ -76,9 +76,9 @@ const MenuPage: React.FC = () => {
           <ListItem value="copy" li="copy">Copiar</ListItem>
           <ListItem value="paste" li="paste">Colar</ListItem>
         </Menu>
-      </div>
+      </Place>
 
-      <div>
+      <Place w4>
         <h3>Menu Aninhado Complexo</h3>
         <Menu b one selectedValue={selectedValue} onItemSelect={handleItemSelect}>
           <ListLabel>Navegação</ListLabel>
@@ -106,7 +106,7 @@ const MenuPage: React.FC = () => {
           <ListItem value="admin" li="shield-alt">Administração</ListItem>
           <ListItem value="logout" li="sign-out" ri="power-off">Sair</ListItem>
         </Menu>
-      </div>
+      </Place>
     </Columns>
   )
 }

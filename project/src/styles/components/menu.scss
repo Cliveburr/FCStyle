@@ -71,10 +71,6 @@
     cursor: pointer;
     user-select: none;
 
-    &:hover {
-      background: var(--list-item-hover-background);
-    }
-
     .list-sublist-label {
       flex: 1;
     }

@@ -12,6 +12,7 @@ const Navigation: React.FC = () => {
           <span>Components</span>
           <ul>
             <li><Link to="/components/button">Button</Link></li>
+            <li><Link to="/components/dropdown">Dropdown</Link></li>
             <li><Link to="/components/menu">Menu</Link></li>
           </ul>
         </li>

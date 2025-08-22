@@ -47,4 +47,39 @@ $colors: (
             background-color: var(--#{$color}-border);
         }
     }
+
+    // Inverse variant swaps background and text colors
+    .#{$color}-inv {
+        background-color: var(--#{$color}-color);
+        color: var(--#{$color}-bg);
+        border-color: var(--#{$color}-color);
+
+        .hoverable:hover:not(:disabled) {
+            background-color: var(--#{$color}-hover-color);
+            color: var(--#{$color}-hover-bg);
+            border-color: var(--#{$color}-hover-color);
+            transition: var(--transition5);
+        }
+
+        .selected {
+            background-color: var(--#{$color}-selected-color);
+            color: var(--#{$color}-selected-bg);
+            border-color: var(--#{$color}-selected-color);
+        }
+
+        .has-selected {
+            .list-sublist-header {
+                background: color-mix(in srgb, var(--#{$color}-selected-color) 60%, white 40%);
+                border-left-color: var(--#{$color}-selected-bg);
+            }
+        }
+
+        .list-label {
+            color: currentColor;
+        }
+
+        .list-separator {
+            background-color: var(--#{$color}-color);
+        }
+    }
 }
