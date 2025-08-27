@@ -2,7 +2,7 @@
 import { ClassBuilderDef, ifBy, ifSet } from "./classBuilder";
 
 export interface ColorSet {
-  variant?: 'white' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'success' | 'warning' | 'danger';
+  variant?: 'white' | 'black' | 'gray1' | 'gray2' | 'gray3' | 'gray4' | 'gray5' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'success' | 'warning' | 'danger';
   inverse?: boolean;
   hoverable?: boolean;
   selected?: boolean;
@@ -14,6 +14,12 @@ export interface ColorShortcuts {
   
   // Numeric color shortcuts
   white?: boolean;
+  black?: boolean;
+  gray1?: boolean;
+  gray2?: boolean;
+  gray3?: boolean;
+  gray4?: boolean;
+  gray5?: boolean;
   one?: boolean;
   two?: boolean;
   three?: boolean;
@@ -22,6 +28,12 @@ export interface ColorShortcuts {
   six?: boolean;
   seven?: boolean;
   white_inv?: boolean;
+  black_inv?: boolean;
+  gray1_inv?: boolean;
+  gray2_inv?: boolean;
+  gray3_inv?: boolean;
+  gray4_inv?: boolean;
+  gray5_inv?: boolean;
   one_inv?: boolean;
   two_inv?: boolean;
   three_inv?: boolean;
@@ -63,6 +75,12 @@ export const ColorBuilder: ClassBuilderDef<ColorSet> = {
     'color': ifBy,
     // Numeric colors
   'white': ifSet({ variant: 'white' }),
+  'black': ifSet({ variant: 'black' }),
+  'gray1': ifSet({ variant: 'gray1' }),
+  'gray2': ifSet({ variant: 'gray2' }),
+  'gray3': ifSet({ variant: 'gray3' }),
+  'gray4': ifSet({ variant: 'gray4' }),
+  'gray5': ifSet({ variant: 'gray5' }),
   'one': ifSet({ variant: 'one' }),
   'two': ifSet({ variant: 'two' }),
   'three': ifSet({ variant: 'three' }),
@@ -71,6 +89,12 @@ export const ColorBuilder: ClassBuilderDef<ColorSet> = {
   'six': ifSet({ variant: 'six' }),
   'seven': ifSet({ variant: 'seven' }),
   'white_inv': ifSet({ variant: 'white', inverse: true }),
+  'black_inv': ifSet({ variant: 'black', inverse: true }),
+  'gray1_inv': ifSet({ variant: 'gray1', inverse: true }),
+  'gray2_inv': ifSet({ variant: 'gray2', inverse: true }),
+  'gray3_inv': ifSet({ variant: 'gray3', inverse: true }),
+  'gray4_inv': ifSet({ variant: 'gray4', inverse: true }),
+  'gray5_inv': ifSet({ variant: 'gray5', inverse: true }),
   'one_inv': ifSet({ variant: 'one', inverse: true }),
   'two_inv': ifSet({ variant: 'two', inverse: true }),
   'three_inv': ifSet({ variant: 'three', inverse: true }),

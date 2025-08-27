@@ -1,15 +1,23 @@
-import React, { useState, useRef, useEffect, cloneElement, isValidElement } from 'react';
-import { BorderBuilder, BorderShortcuts, classBuilder, ColorBuilder, ColorShortcuts, FlexChildrenBuilder, FlexChildrenShortcuts, MarginBuilder, MarginShortcuts, SizeBuilder, SizeShortcuts } from '../../helpers';
-import { DropdownHeaderProps } from './DropdownHeader';
-import { DropdownContentProps } from './DropdownContent';
+import React, { useState, useRef, useEffect } from 'react';
+import { classBuilder, FlexChildrenBuilder, FlexChildrenShortcuts, MarginBuilder, MarginShortcuts, SizeBuilder, SizeShortcuts, IconSet, ColorBuilder, BorderBuilder, ColorShortcuts, BorderShortcuts } from '../../helpers';
+import { Button } from '../Button';
+import { Menu } from '../menu/Menu';
 
 export type DropdownDirection = 'up' | 'down' | 'left' | 'right';
 
-export interface DropdownProps extends BorderShortcuts, ColorShortcuts, FlexChildrenShortcuts, MarginShortcuts, SizeShortcuts {
-  // Filhos: deve conter um header e um content
+export interface DropdownProps extends
+  ColorShortcuts, MarginShortcuts, BorderShortcuts, FlexChildrenShortcuts, SizeShortcuts {
+  // Filhos: ListItems diretos
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+
+  // Props do button
+  leftIcon?: IconSet;
+  li?: string;
+  as?: 'button' | 'link' | 'submit' | 'reset',
+  label?: string;
+  disabled?: boolean;
   
   // Configurações específicas do dropdown
   direction?: DropdownDirection;
@@ -19,6 +27,10 @@ export interface DropdownProps extends BorderShortcuts, ColorShortcuts, FlexChil
   onToggle?: (isOpen: boolean) => void;
   closeOnClickOutside?: boolean;
   closeOnItemSelect?: boolean;
+  
+  // Menu props
+  selectedValue?: any;
+  onSelect?: (value: any) => void;
   
   // Posicionamento
   offset?: number;
@@ -30,12 +42,22 @@ export const Dropdown: React.FC<DropdownProps> = ({
   className,
   style,
   
+  label = 'Dropdown',
+  as,
+  disabled = false,
+  
+  leftIcon,
+  li,
+  
   direction = 'down',
   
   isOpen: controlledIsOpen,
   onToggle,
   closeOnClickOutside = true,
   closeOnItemSelect = true,
+  
+  selectedValue,
+  onSelect,
   
   offset = 4,
   zIndex = 1000,
@@ -91,21 +113,27 @@ export const Dropdown: React.FC<DropdownProps> = ({
     return () => document.removeEventListener('keydown', handleEsc);
   }, [isOpen]);
   
-  // Item select handler para Content
-  const handleItemClick = (value?: any) => {
+  // Item select handler
+  const handleItemSelect = (value?: any) => {
+    onSelect?.(value);
     if (closeOnItemSelect) {
       handleClose();
     }
   };
+
+  // Extract props for Button
+  const { domProps: leftDomProps, classNames: buttonClassNames } = classBuilder('dropdown-trigger')
+    .addBuilder(ColorBuilder)
+    .addBuilder(BorderBuilder)
+    .build(props);
   
+  // Classes para o dropdown
   const { domProps, classNames } = classBuilder('dropdown')
     .add(className)
-    .addBuilder(ColorBuilder)
-    .addBuilder(MarginBuilder)
-    .addBuilder(BorderBuilder)
-    .addBuilder(FlexChildrenBuilder)
     .addBuilder(SizeBuilder)
-    .build(props);
+    .addBuilder(MarginBuilder)
+    .addBuilder(FlexChildrenBuilder)
+    .build(leftDomProps);
   
   // Classes para o dropdown content baseado na direção
   const contentClasses = classBuilder('dropdown-content')
@@ -119,54 +147,33 @@ export const Dropdown: React.FC<DropdownProps> = ({
     ...style
   };
   
-  // Processar os children para injetar propriedades
-  const processedChildren = React.Children.map(children, (child, index) => {
-    if (!isValidElement(child)) return child;
-    
-    const childType = child.type as any;
-    
-    // Se é um componente header (DropdownButton, etc)
-    if (childType && (
-      childType.name === 'DropdownButton' || 
-      childType.displayName === 'DropdownHeader' ||
-      (child.props as DropdownHeaderProps).onClick !== undefined
-    )) {
-      return cloneElement(child as React.ReactElement<DropdownHeaderProps>, {
-        onClick: handleToggle,
-        className: classBuilder()
-          .add((child.props as DropdownHeaderProps).className)
-          .add('dropdown-trigger')
-          .build({}).classNames
-      });
-    }
-    
-    // Se é um componente content (DropdownMenu, DropdownRender, etc)
-    if (childType && (
-      childType.name === 'DropdownMenu' || 
-      childType.name === 'DropdownRender' ||
-      childType.displayName === 'DropdownContent' ||
-      (child.props as DropdownContentProps).onItemClick !== undefined
-    )) {
-      return isOpen ? (
-        <div className={contentClasses} style={contentStyle} key="dropdown-content">
-          {cloneElement(child as React.ReactElement<DropdownContentProps>, {
-            onItemClick: handleItemClick,
-            onClose: handleClose,
-            className: classBuilder()
-              .add((child.props as DropdownContentProps).className)
-              .add('dropdown-content-inner')
-              .build({}).classNames
-          })}
-        </div>
-      ) : null;
-    }
-    
-    return child;
-  });
-  
+  // Button props
+  const buttonProps = {
+    li: (typeof leftIcon === 'string' ? leftIcon : undefined) || li,
+    ri: isOpen ? 'chevron-up' : 'chevron-down',
+    leftIcon: (typeof leftIcon !== 'string' ? leftIcon : undefined),
+    disabled,
+    as,
+    className: buttonClassNames
+  };
+
   return (
     <div ref={dropdownRef} className={classNames} {...domProps}>
-      {processedChildren}
+      <Button {...buttonProps} onClick={handleToggle}>
+        {label}
+      </Button>
+      
+      {isOpen && (
+        <div className={contentClasses} style={contentStyle}>
+          <Menu
+            selectedValue={selectedValue}
+            onItemSelect={handleItemSelect}
+            white sh b    //TODO: parametrizar
+          >
+            {children}
+          </Menu>
+        </div>
+      )}
     </div>
   );
 };

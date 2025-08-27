@@ -28,6 +28,18 @@ export interface ActiveEffectSet {
   active?: 'brightness' | 'scale';
 }
 
+export interface ShadowShortcurts {
+  sh1?: boolean;
+  sh2?: boolean;
+  sh?: boolean;
+  sh4?: boolean;
+  sh5?: boolean;
+  shadowNone?: boolean;
+  shadowSuccess?: boolean;
+  shadowError?: boolean;
+  shadowWarning?: boolean;
+}
+
 export interface EffectsShortcuts {
   // Effect sets
   transition?: TransitionSet;
@@ -48,17 +60,6 @@ export interface EffectsShortcuts {
   transitionColors?: boolean;
   transitionFocus?: boolean;
   transitionFilter?: boolean;
-  
-  // Shadow shortcuts
-  shadow1?: boolean;
-  shadow2?: boolean;
-  sh3?: boolean;
-  shadow4?: boolean;
-  shadow5?: boolean;
-  shadowNone?: boolean;
-  shadowSuccess?: boolean;
-  shadowError?: boolean;
-  shadowWarning?: boolean;
   
   // Focus shadow shortcuts
   focusShadow1?: boolean;
@@ -115,11 +116,11 @@ export const EffectsBuilder: ClassBuilderDef<EffectsShortcuts> = {
     'transitionFilter': ifSet({ transition: { transition: 'filter' } }),
     
     // Shadow shortcuts
-    'shadow1': ifSet({ shadow: { shadow: 1 } }),
-    'shadow2': ifSet({ shadow: { shadow: 2 } }),
-    'sh3': ifSet({ shadow: { shadow: 3 } }),
-    'shadow4': ifSet({ shadow: { shadow: 4 } }),
-    'shadow5': ifSet({ shadow: { shadow: 5 } }),
+    'sh1': ifSet({ shadow: { shadow: 1 } }),
+    'sh2': ifSet({ shadow: { shadow: 2 } }),
+    'sh': ifSet({ shadow: { shadow: 3 } }),
+    'sh4': ifSet({ shadow: { shadow: 4 } }),
+    'sh5': ifSet({ shadow: { shadow: 5 } }),
     'shadowNone': ifSet({ shadow: { shadow: 'none' } }),
     'shadowSuccess': ifSet({ shadow: { shadow: 'success' } }),
     'shadowError': ifSet({ shadow: { shadow: 'error' } }),

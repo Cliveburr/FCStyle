@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownButton, DropdownMenu, DropdownRender, Button, Place } from 'fcstyle';
+import { Dropdown, DropdownRender, Button, Place } from 'fcstyle';
 import { ListItem, ListLabel, ListSeparator } from 'fcstyle';
 
 export const DropdownPage: React.FC = () => {
@@ -9,7 +9,7 @@ export const DropdownPage: React.FC = () => {
 
   return (
     <Place m>
-      <h1>Dropdown Component - Nova Estrutura Modular 🎉</h1>
+      <h1>Dropdown Component - REFACTOR COMPLETO! 🎉</h1>
       
       <div style={{ 
         padding: '1rem', 
@@ -18,365 +18,166 @@ export const DropdownPage: React.FC = () => {
         borderRadius: '8px', 
         marginBottom: '2rem' 
       }}>
-        <h2 style={{ color: '#155724', margin: '0 0 1rem 0' }}>✅ ESTRUTURA MODULAR FUNCIONANDO!</h2>
+        <h2 style={{ color: '#155724', margin: '0 0 1rem 0' }}>✅ NOVA API SIMPLIFICADA!</h2>
         <p style={{ margin: '0', color: '#155724' }}>
-          <strong>Nova arquitetura com DropdownButton, DropdownMenu e DropdownRender!</strong> 
-          Todos os exemplos abaixo usam a nova estrutura modular.
+          <strong>Refactor completo da estrutura do Dropdown!</strong><br/>
+          • <code>Dropdown</code> - cria automaticamente header button + aceita ListItems diretos<br/>
+          • <code>DropdownRender</code> - igual ao Dropdown, mas filhos são conteúdo customizado<br/>
+          • Suporte a <code>type="link"</code> para header como &lt;a&gt;
         </p>
       </div>
 
       <section>
-        <h2>🎉 NOVA ESTRUTURA MODULAR</h2>
+        <h2>🚀 NOVA API SIMPLIFICADA</h2>
         
-        <h3>1. DropdownButton + DropdownRender</h3>
+        <h3>1. Dropdown Simples - Nova API</h3>
         <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>Conteúdo totalmente customizado:</strong></p>
-          <Dropdown>
-            <DropdownButton one>
-              DropdownButton + DropdownRender
-            </DropdownButton>
-            <DropdownRender>
-              <div style={{ padding: '1rem', minWidth: '250px' }}>
-                <h4 style={{ color: '#28a745' }}>🎨 DropdownRender!</h4>
-                <p>Este é conteúdo customizado usando o novo DropdownRender!</p>
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                  <Button success>Salvar</Button>
-                  <Button danger>Cancelar</Button>
-                </div>
-              </div>
-            </DropdownRender>
-          </Dropdown>
-        </div>
-
-        <h3>2. DropdownButton + DropdownMenu</h3>
-        <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>Menu estruturado com ListItems:</strong></p>
-          <Dropdown closeOnItemSelect={true}>
-            <DropdownButton two ri="chevron-down">
-              DropdownButton + DropdownMenu
-            </DropdownButton>
-            <DropdownMenu two
-              selectedValue={selectedOption}
-              onSelect={(value: any) => setSelectedOption(value)}
-            >
-              <ListItem value="nova1">Nova Opção 1</ListItem>
-              <ListItem value="nova2">Nova Opção 2</ListItem>
-              <ListSeparator />
-              <ListLabel>Nova Categoria</ListLabel>
-              <ListItem value="nova3">Nova Opção 3</ListItem>
-            </DropdownMenu>
+          <p><strong>Sem precisar de DropdownButton + DropdownMenu:</strong></p>
+          <Dropdown w4
+            label="Nova API Dropdown" 
+            li="user"
+            success
+            selectedValue={selectedOption}
+            onSelect={(value: any) => setSelectedOption(value)}
+          >
+            <ListItem value="nova1">Nova Opção 1</ListItem>
+            <ListItem value="nova2">Nova Opção 2</ListItem>
+            <ListSeparator />
+            <ListLabel>Nova Categoria</ListLabel>
+            <ListItem value="nova3">Nova Opção 3</ListItem>
           </Dropdown>
           <p style={{ marginTop: '1rem' }}>
             <strong>Selecionado:</strong> {selectedOption || 'Nenhum'}
           </p>
         </div>
 
-        <h3>3. Diferentes Estilos de DropdownButton</h3>
+        <h3>2. DropdownRender - Nova API</h3>
         <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>DropdownButton herda todas as props do Button:</strong></p>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            
-            <Dropdown>
-              <DropdownButton three li="user">
-                Com Ícone Esquerda
-              </DropdownButton>
-              <DropdownRender>
-                <div style={{ padding: '1rem' }}>
-                  <p>DropdownButton herda todas as props do Button!</p>
-                </div>
-              </DropdownRender>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownButton success ri="caret-down">
-                Success + Ícone Direita
-              </DropdownButton>
-              <DropdownMenu>
-                <ListItem>Success Item 1</ListItem>
-                <ListItem>Success Item 2</ListItem>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownButton danger li="warning" ri="chevron-down">
-                Danger + Ambos Ícones
-              </DropdownButton>
-              <DropdownRender>
-                <div style={{ padding: '1rem' }}>
-                  <p>⚠️ Componente com estilo danger!</p>
-                </div>
-              </DropdownRender>
-            </Dropdown>
-          </div>
+          <p><strong>Conteúdo customizado direto:</strong></p>
+          <DropdownRender 
+            label="DropdownRender Novo" 
+            danger
+            li="user"
+          >
+            <div style={{ padding: '1rem', minWidth: '250px' }}>
+              <h4 style={{ color: '#dc3545' }}>🎨 Nova API DropdownRender!</h4>
+              <p>Não precisa mais de wrapper, conteúdo vai direto nos children!</p>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                <Button success two>Salvar</Button>
+                <Button danger two>Cancelar</Button>
+              </div>
+            </div>
+          </DropdownRender>
         </div>
 
-        <h3>4. Estado Controlado</h3>
+        <h3>3. Dropdown tipo Link</h3>
         <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>Dropdown controlado externamente:</strong></p>
+          <p><strong>Header como &lt;a&gt; tag:</strong></p>
+          <Dropdown 
+            label="Link Dropdown" 
+            as="link"
+          >
+            <ListItem value="link1">Link Item 1</ListItem>
+            <ListItem value="link2">Link Item 2</ListItem>
+          </Dropdown>
+        </div>
+
+        <h3>4. Comparação: API Antiga vs Nova</h3>
+        <div className="showcase" style={{ marginBottom: '2rem' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gap: '2rem',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <div style={{ padding: '1rem', background: '#fff3cd' }}>
+              <h4 style={{ color: '#856404', margin: '0 0 1rem 0' }}>🔸 API Antiga (removida - apenas para referência)</h4>
+              <p style={{ color: '#856404', margin: 0, fontSize: '0.9em' }}>
+                Componentes DropdownButton e DropdownMenu foram removidos.<br/>
+                Use a nova API do Dropdown diretamente.
+              </p>
+            </div>
+            
+            <div style={{ padding: '1rem', background: '#d4edda' }}>
+              <h4 style={{ color: '#155724', margin: '0 0 1rem 0' }}>✅ API Nova (recomendada)</h4>
+              <Dropdown 
+                label="API Nova" 
+                selectedValue={selectedCategory}
+                onSelect={(value: any) => setSelectedCategory(value)}
+              >
+                <ListItem value="new1">Item Novo 1</ListItem>
+                <ListItem value="new2">Item Novo 2</ListItem>
+              </Dropdown>
+            </div>
+          </div>
+          <p style={{ marginTop: '1rem' }}>
+            <strong>Categoria selecionada:</strong> {selectedCategory || 'Nenhuma'}
+          </p>
+        </div>
+
+        <h3>5. Estado Controlado</h3>
+        <div className="showcase" style={{ marginBottom: '2rem' }}>
+          <p><strong>Controle externo:</strong></p>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <Dropdown 
+              label={`Controlado ${isControlledOpen ? '(Aberto)' : '(Fechado)'}`}
               isOpen={isControlledOpen}
               onToggle={setIsControlledOpen}
             >
-              <DropdownButton five>
-                Controlado {isControlledOpen ? '(Aberto)' : '(Fechado)'}
-              </DropdownButton>
-              <DropdownMenu>
-                <ListItem>Item Controlado 1</ListItem>
-                <ListItem>Item Controlado 2</ListItem>
-              </DropdownMenu>
+              <ListItem value="c1">Item Controlado 1</ListItem>
+              <ListItem value="c2">Item Controlado 2</ListItem>
             </Dropdown>
             
             <Button 
               onClick={() => setIsControlledOpen(!isControlledOpen)}
-              six
             >
               {isControlledOpen ? 'Fechar' : 'Abrir'}
             </Button>
           </div>
         </div>
-
-        <h3>5. Diferentes Direções</h3>
-        <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>4 direções de abertura:</strong></p>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(2, 1fr)', 
-            gap: '2rem' 
-          }}>
-            
-            <div style={{ textAlign: 'center' }}>
-              <h4>Para Baixo</h4>
-              <Dropdown direction="down">
-                <DropdownButton>Down ↓</DropdownButton>
-                <DropdownMenu>
-                  <ListItem>Opção Down 1</ListItem>
-                  <ListItem>Opção Down 2</ListItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
-              <h4>Para Cima</h4>
-              <Dropdown direction="up">
-                <DropdownButton>Up ↑</DropdownButton>
-                <DropdownMenu>
-                  <ListItem>Opção Up 1</ListItem>
-                  <ListItem>Opção Up 2</ListItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
-              <h4>Para a Direita</h4>
-              <Dropdown direction="right">
-                <DropdownButton>Right →</DropdownButton>
-                <DropdownMenu>
-                  <ListItem>Opção Right 1</ListItem>
-                  <ListItem>Opção Right 2</ListItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
-              <h4>Para a Esquerda</h4>
-              <Dropdown direction="left">
-                <DropdownButton>Left ←</DropdownButton>
-                <DropdownMenu>
-                  <ListItem>Opção Left 1</ListItem>
-                  <ListItem>Opção Left 2</ListItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          </div>
-        </div>
-
-        <h3>6. Conteúdo Customizado Complexo</h3>
-        <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>Formulário interativo:</strong></p>
-          <Dropdown closeOnClickOutside={false}>
-            <DropdownButton>Formulário Login</DropdownButton>
-            <DropdownRender>
-              <div style={{ padding: '1.5rem', minWidth: '300px' }}>
-                <h4>Login</h4>
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '1rem', 
-                  marginTop: '1rem' 
-                }}>
-                  <input 
-                    type="text" 
-                    placeholder="Usuário" 
-                    style={{ 
-                      padding: '0.5rem', 
-                      border: '1px solid #ccc', 
-                      borderRadius: '4px' 
-                    }}
-                  />
-                  <input 
-                    type="password" 
-                    placeholder="Senha" 
-                    style={{ 
-                      padding: '0.5rem', 
-                      border: '1px solid #ccc', 
-                      borderRadius: '4px' 
-                    }}
-                  />
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button success>Entrar</Button>
-                    <Button>Cancelar</Button>
-                  </div>
-                </div>
-              </div>
-            </DropdownRender>
-          </Dropdown>
-        </div>
-
-        <h3>7. Múltiplos Dropdowns</h3>
-        <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <p><strong>Vários dropdowns juntos:</strong></p>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Dropdown>
-              <DropdownButton>Filtro 1</DropdownButton>
-              <DropdownMenu>
-                <ListItem>Opção A</ListItem>
-                <ListItem>Opção B</ListItem>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownButton>Filtro 2</DropdownButton>
-              <DropdownMenu>
-                <ListItem>Opção X</ListItem>
-                <ListItem>Opção Y</ListItem>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown>
-              <DropdownButton>Ações</DropdownButton>
-              <DropdownRender>
-                <div style={{ padding: '1rem' }}>
-                  <Button style={{ display: 'block', width: '100%', marginBottom: '0.5rem' }}>
-                    Exportar
-                  </Button>
-                  <Button style={{ display: 'block', width: '100%' }}>
-                    Importar
-                  </Button>
-                </div>
-              </DropdownRender>
-            </Dropdown>
-          </div>
-        </div>
-
-        <h3>8. Menu com Seleção de Categoria</h3>
-        <div className="showcase" style={{ marginBottom: '2rem' }}>
-          <Dropdown closeOnItemSelect={true}>
-            <DropdownButton>
-              Categoria: {selectedCategory || 'Selecione uma Categoria'}
-            </DropdownButton>
-            <DropdownMenu 
-              selectedValue={selectedCategory}
-              onSelect={(value: any) => setSelectedCategory(value)}
-            >
-              <ListItem value="tech">Tecnologia</ListItem>
-              <ListItem value="design">Design</ListItem>
-              <ListItem value="business">Negócios</ListItem>
-              <ListSeparator />
-              <ListLabel>Outros</ListLabel>
-              <ListItem value="education">Educação</ListItem>
-              <ListItem value="health">Saúde</ListItem>
-            </DropdownMenu>
-          </Dropdown>
-          <p style={{ marginTop: '1rem' }}>
-            <strong>Categoria selecionada:</strong> {selectedCategory || 'Nenhuma'}
-          </p>
-        </div>
       </section>
 
       <section>
-        <h2>🏆 Resumo da Nova Estrutura</h2>
-        <div className="showcase">
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-            gap: '1rem' 
-          }}>
-            
-            <div style={{ 
-              padding: '1rem', 
-              background: '#d4edda', 
-              borderRadius: '4px', 
-              border: '1px solid #c3e6cb' 
-            }}>
-              <h4 style={{ color: '#155724', margin: '0 0 0.5rem 0' }}>✅ DropdownButton</h4>
-              <p style={{ color: '#155724', margin: 0, fontSize: '0.9rem' }}>
-                Herda todas as props do Button. Pode ter ícones à esquerda e direita,
-                cores, tamanhos e estilos customizados.
-              </p>
+        <h2>📋 DOCUMENTAÇÃO API ANTIGA (ainda funciona)</h2>
+        
+        <h3>6. DropdownRender para Conteúdo Customizado</h3>
+        <div className="showcase" style={{ marginBottom: '2rem' }}>
+          <p><strong>DropdownRender com conteúdo personalizado:</strong></p>
+          <DropdownRender 
+            label="DropdownRender Customizado"
+            li="star"
+          >
+            <div style={{ padding: '1rem', minWidth: '250px' }}>
+              <h4 style={{ color: '#28a745' }}>🎨 DropdownRender!</h4>
+              <p>Este é conteúdo customizado usando o DropdownRender!</p>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                <Button success>Salvar</Button>
+                <Button danger>Cancelar</Button>
+              </div>
             </div>
-
-            <div style={{ 
-              padding: '1rem', 
-              background: '#d4edda', 
-              borderRadius: '4px', 
-              border: '1px solid #c3e6cb' 
-            }}>
-              <h4 style={{ color: '#155724', margin: '0 0 0.5rem 0' }}>✅ DropdownMenu</h4>
-              <p style={{ color: '#155724', margin: 0, fontSize: '0.9rem' }}>
-                Para menus estruturados com ListItem, ListLabel e ListSeparator.
-                Suporte completo a seleção e eventos.
-              </p>
-            </div>
-
-            <div style={{ 
-              padding: '1rem', 
-              background: '#d4edda', 
-              borderRadius: '4px', 
-              border: '1px solid #c3e6cb' 
-            }}>
-              <h4 style={{ color: '#155724', margin: '0 0 0.5rem 0' }}>✅ DropdownRender</h4>
-              <p style={{ color: '#155724', margin: 0, fontSize: '0.9rem' }}>
-                Para conteúdo completamente customizado. Formulários, botões,
-                qualquer JSX pode ser renderizado.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ 
-            marginTop: '2rem', 
-            padding: '1rem', 
-            background: '#f8f9fa', 
-            borderRadius: '4px' 
-          }}>
-            <h4>📋 Padrão de Uso:</h4>
-            <pre style={{ 
-              background: '#ffffff', 
-              padding: '1rem', 
-              borderRadius: '4px', 
-              overflow: 'auto',
-              margin: '0.5rem 0'
-            }}>
-{`// Menu estruturado
-<Dropdown>
-  <DropdownButton>Menu</DropdownButton>
-  <DropdownMenu>
-    <ListItem value="1">Item 1</ListItem>
-    <ListItem value="2">Item 2</ListItem>
-  </DropdownMenu>
-</Dropdown>
-
-// Conteúdo customizado
-<Dropdown>
-  <DropdownButton>Custom</DropdownButton>
-  <DropdownRender>
-    <div>Qualquer conteúdo aqui</div>
-  </DropdownRender>
-</Dropdown>`}
-            </pre>
-          </div>
+          </DropdownRender>
         </div>
       </section>
+
+      <div style={{ 
+        padding: '1rem', 
+        background: '#f8f9fa', 
+        border: '1px solid #dee2e6', 
+        borderRadius: '8px', 
+        marginTop: '2rem' 
+      }}>
+        <h3>📝 Resumo do Refactor</h3>
+        <ul>
+          <li><strong>Nova API Dropdown:</strong> Cria automaticamente o header button e aceita ListItems diretamente</li>
+          <li><strong>Nova API DropdownRender:</strong> Igual ao Dropdown, mas os children são conteúdo customizado</li>
+          <li><strong>type="button":</strong> (padrão) Header como Button component</li>
+          <li><strong>type="link":</strong> Header como tag &lt;a&gt;</li>
+          <li><strong>API Antiga removida:</strong> DropdownButton e DropdownMenu foram removidos</li>
+          <li><strong>Simplificação total:</strong> API mais limpa e intuitiva</li>
+        </ul>
+      </div>
     </Place>
   );
 };

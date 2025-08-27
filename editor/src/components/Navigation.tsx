@@ -35,6 +35,7 @@ const Navigation: React.FC = () => {
         <li className="editor-nav__group">
           <span>Utilities</span>
           <ul>
+            <li><Link to="/utilities/colors">Colors</Link></li>
             <li><Link to="/typography">Typography</Link></li>
             <li><Link to="/effects">Effects</Link></li>
           </ul>

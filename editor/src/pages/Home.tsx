@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   }
 
   const createShowArea = (t: SimpleTest) => {
-    return <Place success p rounded hoverable pointer selected={t.isSelected} key={t.i}
+    return <Place success p hoverable pointer selected={t.isSelected} key={t.i}
       onClick={() => swapSelected(t)}>{t.text}</Place>
   }
 

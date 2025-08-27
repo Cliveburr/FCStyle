@@ -2,12 +2,12 @@
   position: relative;
   display: inline-block;
 
+  .dropdown-trigger {
+    width: 100%;
+  }
+
   .dropdown-content {
     position: absolute;
-    background: var(--white-bg);
-    border: var(--border1) solid var(--white-border);
-    border-radius: var(--round2);
-    box-shadow: var(--shadow3);
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95);

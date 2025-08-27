@@ -2,10 +2,11 @@ import React from 'react';
 import { BorderBuilder, BorderShortcuts, classBuilder, ColorBuilder, ColorShortcuts,
     EffectsBuilder,
     EffectsShortcuts,
-    MarginBuilder, MarginShortcuts, SizeBuilder, SizeShortcuts } from '../../helpers';
+    MarginBuilder, MarginShortcuts, ShadowShortcurts, SizeBuilder, SizeShortcuts } from '../../helpers';
 
 export interface MenuProps extends React.HTMLAttributes<HTMLDivElement>,
-  BorderShortcuts, ColorShortcuts, MarginShortcuts, SizeShortcuts, EffectsShortcuts {
+  BorderShortcuts, ColorShortcuts, MarginShortcuts, SizeShortcuts, EffectsShortcuts,
+  ShadowShortcurts {
 
   children: React.ReactNode;
   className?: string;

@@ -12,6 +12,7 @@ import InputFieldPage from './pages/form/InputFieldPage'
 import PlacePage from './pages/grid/PlacePage'
 import { TypographyPage } from './pages/TypographyPage'
 import { EffectsPage } from './pages/EffectsPage'
+import ColorPage from './pages/utilities/ColorPage'
 
 function App() {
   // Use Vite's BASE_URL so dev uses "/" and production (demo) uses "/FCStyle/"
@@ -22,6 +23,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/utilities/colors" element={<ColorPage />} />
           <Route path="/typography" element={<TypographyPage />} />
           <Route path="/components/button" element={<ButtonPage />} />
           <Route path="/components/dropdown" element={<DropdownPage />} />
