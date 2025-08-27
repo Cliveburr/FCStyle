@@ -14,6 +14,7 @@ const Navigation: React.FC = () => {
             <li><Link to="/components/button">Button</Link></li>
             <li><Link to="/components/dropdown">Dropdown</Link></li>
             <li><Link to="/components/menu">Menu</Link></li>
+            <li><Link to="/components/modal">Modal</Link></li>
           </ul>
         </li>
         <li className="editor-nav__group">

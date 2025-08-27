@@ -216,6 +216,66 @@ import { Icon } from 'fcstyle';
 - `title`: Tooltip text
 - All style shortcuts
 
+### Modal
+
+A modal dialog component that displays content in an overlay with a clickable background to close.
+
+```tsx
+import { Modal } from 'fcstyle';
+
+// Basic modal
+<Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+  <h2>Modal Title</h2>
+  <p>This is the modal content.</p>
+  <Button onClick={() => setIsOpen(false)}>Close</Button>
+</Modal>
+
+// Modal with custom close handler
+<Modal 
+  isOpen={isOpen} 
+  onClose={(event) => {
+    if (confirm('Are you sure you want to close?')) {
+      setIsOpen(false);
+    } else {
+      return false; // Cancel close
+    }
+  }}
+>
+  <h2>Unsaved Changes</h2>
+  <p>You have unsaved changes. Do you really want to close?</p>
+</Modal>
+
+// Modal with styling
+<Modal 
+  isOpen={isOpen} 
+  onClose={() => setIsOpen(false)}
+  className="custom-modal"
+  p4
+  round3
+>
+  <div>Styled modal content</div>
+</Modal>
+
+// Disable overlay click to close
+<Modal 
+  isOpen={isOpen} 
+  onClose={() => setIsOpen(false)}
+  closeOnOverlayClick={false}
+>
+  <p>This modal can only be closed by the close button.</p>
+  <Button onClick={() => setIsOpen(false)}>Close</Button>
+</Modal>
+```
+
+**Props:**
+- `children`: Modal content (React component)
+- `isOpen`: Boolean to control modal visibility
+- `onClose`: Callback function when close is requested. Return `false` to cancel close.
+- `closeOnOverlayClick`: Enable/disable closing by clicking the overlay (default: true)
+- `className`: Additional CSS classes
+- `style`: Inline styles
+- All style shortcuts (colors, margins, borders, etc.)
+
 ### Dropdown
 
 A dropdown menu component with trigger button and menu content.

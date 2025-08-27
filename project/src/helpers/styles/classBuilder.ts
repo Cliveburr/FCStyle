@@ -25,7 +25,11 @@ export interface ClassBuilderDef<T> {
 export class ClassBuilder {
 
     private cls: string[];
-    private builders?: ClassBuilderDef<any>[];
+    private builders?: Array<{
+        builder: ClassBuilderDef<any>,
+        defaultSet?: any
+    }>;
+
     
     constructor(
         ...cls: string[]
@@ -49,17 +53,17 @@ export class ClassBuilder {
         return this;
     }
 
-    addBuilder<T>(builder: ClassBuilderDef<T>): this {
+    addBuilder<T>(builder: ClassBuilderDef<T>, defaultSet?: T): this {
         if (this.builders) {
-            this.builders.push(builder);
+            this.builders.push({ builder, defaultSet });
         }
         else {
-            this.builders = [builder];
+            this.builders = [{ builder, defaultSet }];
         }
         return this;
     }
 
-    processBuilder(builder: ClassBuilderDef<any>, props: any): void {
+    processBuilder(builder: ClassBuilderDef<any>, props: any, defaultSet?: any): void {
         const sets = [];
         for (let prop in props) {
             if (prop in builder.props) {
@@ -69,6 +73,9 @@ export class ClassBuilder {
                     delete props[prop];
                 }
             }
+        }
+        if (sets.length == 0 && typeof defaultSet !== 'undefined') {
+            sets.push(defaultSet);
         }
         if (sets.length > 0) {
             const builderClasses = builder.process(sets);
@@ -83,8 +90,8 @@ export class ClassBuilder {
         const domProps: any = { ...props };
 
         if (this.builders) {
-            for (const builder of this.builders) {
-                this.processBuilder(builder, domProps);
+            for (const b of this.builders) {
+                this.processBuilder(b.builder, domProps, b.defaultSet);
             }
         }
 
