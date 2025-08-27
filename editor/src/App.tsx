@@ -5,6 +5,7 @@ import ButtonPage from './pages/components/ButtonPage'
 import { DropdownPage } from './pages/components/DropdownPage'
 import MenuPage from './pages/components/MenuPage'
 import ModalPage from './pages/components/ModalPage'
+import NotificationPage from './pages/components/NotificationPage'
 import { TagPage } from './pages/components/TagPage'
 import ColumnPage from './pages/grid/ColumnPage'
 import RowPage from './pages/grid/RowPage'
@@ -15,6 +16,7 @@ import PlacePage from './pages/grid/PlacePage'
 import { TypographyPage } from './pages/TypographyPage'
 import { EffectsPage } from './pages/EffectsPage'
 import ColorPage from './pages/utilities/ColorPage'
+import { NotificationContainer } from 'fcstyle'
 
 function App() {
   // Use Vite's BASE_URL so dev uses "/" and production (demo) uses "/FCStyle/"
@@ -22,6 +24,7 @@ function App() {
 
   return (
     <Router basename={basename}>
+      <NotificationContainer />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -31,6 +34,7 @@ function App() {
           <Route path="/components/dropdown" element={<DropdownPage />} />
           <Route path="/components/menu" element={<MenuPage />} />
           <Route path="/components/modal" element={<ModalPage />} />
+          <Route path="/components/notification" element={<NotificationPage />} />
           <Route path="/components/tab" element={<TagPage />} />
           <Route path="/grid/place" element={<PlacePage />} />
           <Route path="/grid/column" element={<ColumnPage />} />

@@ -276,6 +276,107 @@ import { Modal } from 'fcstyle';
 - `style`: Inline styles
 - All style shortcuts (colors, margins, borders, etc.)
 
+### Notification System
+
+Sistema completo de notificações com hook `useNotifications` para gerenciamento centralizado. Não requer Provider - funciona direto com estado global interno.
+
+#### Configuração Global
+
+```tsx
+// App.tsx
+import { NotificationContainer } from 'fcstyle';
+
+function App() {
+  return (
+    <>
+      {/* NotificationContainer único e global */}
+      <NotificationContainer />
+      
+      {/* Seu resto da aplicação */}
+      <YourAppComponents />
+    </>
+  );
+}
+```
+
+#### Hook useNotifications
+
+```tsx
+import { useNotifications } from 'fcstyle';
+
+function MyComponent() {
+  const {
+    success,
+    error,
+    warning,
+    info,
+    clearAll
+  } = useNotifications();
+
+  return (
+    <>
+      <button onClick={() => success('Operação realizada com sucesso!')}>
+        Mostrar Success
+      </button>
+
+      <button onClick={() => error('Erro ao processar dados')}>
+        Mostrar Error
+      </button>
+
+      <button onClick={() => warning('Atenção: verifique os campos')}>
+        Mostrar Warning
+      </button>
+
+      <button onClick={() => info('Nova atualização disponível')}>
+        Mostrar Info
+      </button>
+
+      <button onClick={clearAll}>
+        Limpar Todas
+      </button>
+    </>
+  );
+}
+```
+
+#### Métodos do Hook
+
+- `success(message, options?)` - Notificação de sucesso (verde)
+- `error(message, options?)` - Notificação de erro (vermelho)
+- `warning(message, options?)` - Notificação de aviso (laranja)
+- `info(message, options?)` - Notificação informativa (azul)
+- `clearAll()` - Remove todas as notificações
+
+#### Opções das Notificações
+
+```tsx
+const options = {
+  title: 'Título opcional',           // Título da notificação
+  duration: 5000,                     // Duração em ms (0 = não fecha automaticamente)
+  closable: true                      // Mostra botão de fechar
+};
+
+// Exemplos
+success('Mensagem', { title: 'Sucesso!', duration: 3000 });
+error('Erro crítico', { duration: 0 }); // Não fecha automaticamente
+warning('Atenção', { closable: false }); // Sem botão de fechar
+```
+
+#### Características do Sistema
+
+- ✅ **Container Global**: Um único `NotificationContainer` para toda a aplicação
+- ✅ **Posicionamento Fixo**: Sempre no canto superior direito
+- ✅ **Gerenciamento Centralizado**: Via hook `useNotifications`
+- ✅ **Suporte Ilimitado**: Quantidade ilimitada de notificações encadeadas
+- ✅ **Limitação Automática**: Máximo de 5 notificações simultâneas
+- ✅ **Tipos Pré-definidos**: success, error, warning, info
+- ✅ **Animações Suaves**: Entrada/saída com deslize lateral
+- ✅ **Auto-close Customizável**: Timer configurável por notificação
+- ✅ **Ícones Específicos**: Cada tipo tem seu ícone característico
+- ✅ **Suporte a Títulos**: Títulos opcionais para as notificações
+- ✅ **Estilos Centralizados**: Todos os estilos estão definidos no arquivo `notification.scss`
+
+
 ### Tab
 
 A tab component that can be used horizontally or vertically to switch between different content panels.

@@ -6,6 +6,9 @@ export * from './form';
 export * from './helpers';
 export * from './validator';
 
+// Export hooks
+export * from './hooks/useNotifications';
+
 // Export a function to apply custom theme variables
 export const applyTheme = (themeVariables: Record<string, string>) => {
   const root = document.documentElement;
