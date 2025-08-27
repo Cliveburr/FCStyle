@@ -5,6 +5,7 @@ import ButtonPage from './pages/components/ButtonPage'
 import { DropdownPage } from './pages/components/DropdownPage'
 import MenuPage from './pages/components/MenuPage'
 import ModalPage from './pages/components/ModalPage'
+import { TagPage } from './pages/components/TagPage'
 import ColumnPage from './pages/grid/ColumnPage'
 import RowPage from './pages/grid/RowPage'
 import DivisorPage from './pages/grid/DivisorPage'
@@ -30,6 +31,7 @@ function App() {
           <Route path="/components/dropdown" element={<DropdownPage />} />
           <Route path="/components/menu" element={<MenuPage />} />
           <Route path="/components/modal" element={<ModalPage />} />
+          <Route path="/components/tab" element={<TagPage />} />
           <Route path="/grid/place" element={<PlacePage />} />
           <Route path="/grid/column" element={<ColumnPage />} />
           <Route path="/grid/row" element={<RowPage />} />

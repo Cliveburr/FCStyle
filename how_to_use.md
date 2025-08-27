@@ -276,6 +276,66 @@ import { Modal } from 'fcstyle';
 - `style`: Inline styles
 - All style shortcuts (colors, margins, borders, etc.)
 
+### Tab
+
+A tab component that can be used horizontally or vertically to switch between different content panels.
+
+```tsx
+import { Tab } from 'fcstyle';
+
+// Basic horizontal tabs
+const horizontalTabs = [
+  { id: 'tab1', label: 'Tab 1', content: <div>Content for Tab 1</div> },
+  { id: 'tab2', label: 'Tab 2', content: <div>Content for Tab 2</div> },
+  { id: 'tab3', label: 'Tab 3', content: <div>Content for Tab 3</div> }
+];
+
+<Tab items={horizontalTabs} />
+
+// Vertical tabs
+const verticalTabs = [
+  { id: 'profile', label: 'Profile', content: <div>Profile settings</div> },
+  { id: 'security', label: 'Security', content: <div>Security options</div> },
+  { id: 'notifications', label: 'Notifications', content: <div>Notification preferences</div> }
+];
+
+<Tab items={verticalTabs} orientation="vertical" />
+
+// With custom active tab and change handler
+<Tab 
+  items={tabs} 
+  defaultActiveId="tab2"
+  onChange={(activeId) => console.log('Active tab:', activeId)}
+/>
+
+// With disabled tabs
+const tabsWithDisabled = [
+  { id: 'enabled', label: 'Enabled', content: <div>Enabled content</div> },
+  { id: 'disabled', label: 'Disabled', content: <div>Disabled content</div>, disabled: true }
+];
+
+<Tab items={tabsWithDisabled} />
+
+// With custom styling
+<Tab 
+  items={tabs}
+  className="custom-tabs"
+  p3
+  round2
+  variant="primary"
+/>
+```
+
+**Props:**
+- `items`: Array of tab items with `id`, `label`, `content`, and optional `disabled` properties
+- `defaultActiveId`: ID of the initially active tab
+- `orientation`: Layout orientation - 'horizontal' (default) or 'vertical'
+- `onChange`: Callback function called when active tab changes, receives the active tab ID
+- `children`: Alternative content to display (used when not providing content in items)
+- `className`: Additional CSS classes
+- `style`: Inline styles
+- All style shortcuts (colors, margins, borders, etc.)
+
 ### Dropdown
 
 A dropdown menu component with trigger button and menu content.
