@@ -4,6 +4,7 @@
 .flex-row {
   display: flex;
   flex-direction: row;
+  box-sizing: border-box;
   
   &.inverse {
     flex-direction: row-reverse;
@@ -13,6 +14,7 @@
 .flex-column {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   
   &.inverse {
     flex-direction: column-reverse;
@@ -53,6 +55,8 @@
 .gap1 { gap: var(--gap1); }
 .gap2 { gap: var(--gap2); }
 .gap3 { gap: var(--gap3); }
+.gap4 { gap: var(--gap4); }
+.gap5 { gap: var(--gap5); }
 
 // Flex children utilities
 .flex-order-0 { order: 0; }

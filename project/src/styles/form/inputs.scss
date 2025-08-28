@@ -1,0 +1,289 @@
+
+
+.input {
+  display: flex;
+  align-items: center;
+  transition: var(--transition-focus);
+
+  > input,
+  > textarea {
+    outline: none;
+    border: none;
+    background: transparent;
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    color: inherit;
+    
+    &::placeholder {
+      color: inherit;
+      opacity: 0.4;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+  }
+
+  > textarea {
+    resize: vertical;
+    min-height: calc(var(--input-height) * 1.5);
+  }
+
+  label:first-child {
+    cursor: text;
+    opacity: 0.4;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    label:first-child {
+      opacity: 0.6;
+    }
+
+    label:last-child {
+      opacity: 0.5;
+    }
+
+    ::placeholder {
+      opacity: 0.6;
+    }
+  }
+
+  &:focus-within {
+    box-shadow: var(--focus-shadow2);
+  }
+
+  &:has(input:disabled),
+  &:has(textarea:disabled) {
+    cursor: not-allowed;
+    
+    label:first-child {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    label:last-child {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  label:last-child {
+    cursor: text;
+    opacity: 0.4;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    
+    i {
+      border: none;
+    }
+  }
+
+  &.valid {
+    border-color: var(--success-border);
+
+    &:focus-within {
+      border-color: var(--success-selected-border);
+      box-shadow: var(--success-shadow);
+    }
+  }
+
+  &.invalid {
+    border-color: var(--danger-border);
+
+    &:focus-within {
+      border-color: var(--danger-selected-border);
+      box-shadow: var(--danger-shadow);
+    }
+  }
+
+
+
+  // Quando contém textarea, ajustar altura e alinhamento
+  // &:has(textarea) {
+  //   align-items: flex-start;
+  //   min-height: calc(var(--input-height) * 2);
+    
+  //   i:first-child,
+  //   .input-icon-left {
+  //     margin-top: calc(var(--input-icon-padding) + 0.125rem); // Alinha com primeira linha do texto
+  //   }
+    
+  //   .input-validation-icon {
+  //     margin-top: calc(var(--input-icon-padding) + 0.125rem); // Alinha com primeira linha do texto
+  //   }
+  // }
+
+  // // Variações de tamanho de ícone
+  // &.input-large-icons {
+  //   --input-icon-size: 1.5rem;
+  //   --input-icon-padding: var(--spacing2);
+  // }
+
+  // &.input-small-icons {
+  //   --input-icon-size: 1rem;
+  //   --input-icon-padding: var(--spacing-half, 0.25rem);
+  // }
+
+  // // Variações de espaçamento
+  // &.input-tight {
+  //   --input-side-spacing: var(--spacing1);
+  // }
+
+  // &.input-loose {
+  //   --input-side-spacing: var(--spacing3);
+  // }
+
+  // // Variações de padding interno personalizado
+  // &.input-compact {
+  //   --input-padding: var(--spacing1) var(--spacing2);
+  // }
+
+  // &.input-comfortable {
+  //   --input-padding: var(--spacing3) var(--spacing2);
+  // }
+
+  // &.input-extra-padding {
+  //   --input-padding: var(--spacing4) var(--spacing3);
+  // }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Base styles for all inputs
+// .input-wrapper {
+//   display: block;
+//   width: 100%;
+//   margin-bottom: var(--input-margin-bottom);
+  
+//   .input-container-with-icons {
+//     position: relative;
+
+    
+//     .input-left-icon {
+//       position: absolute;
+//       left: var(--spacing2);
+//       top: 50%;
+//       transform: translateY(-50%);
+//       z-index: 2;
+//       color: var(--input-icon-color);
+//       pointer-events: none;
+//     }
+    
+//     .input-validation-icon {
+//       position: absolute;
+//       right: var(--spacing2);
+//       top: 50%;
+//       transform: translateY(-50%);
+//       z-index: 2;
+      
+//       &.loading {
+//         color: var(--color-info);
+//       }
+      
+//       &.success {
+//         color: var(--color-success);
+//       }
+      
+//       &.danger {
+//         color: var(--color-danger);
+//       }
+//     }
+    
+//     // Adjust padding when icons are present
+//     &:has(.input-left-icon) input,
+//     &:has(.input-left-icon) textarea {
+//       padding-left: calc(var(--spacing2) + 20px + var(--spacing1));
+//     }
+    
+//     &:has(.input-validation-icon) input,
+//     &:has(.input-validation-icon) textarea {
+//       padding-right: calc(var(--spacing2) + 20px + var(--spacing1));
+//     }
+//   }
+  
+//   .input-error-message {
+//     display: block;
+//     width: 100%;
+//     margin-top: var(--input-error-margin-top);
+//     font-size: var(--font-size1);
+//     color: var(--input-error-color);
+//   }
+// }
+
+// // Base input styles (mantido para compatibilidade com outros componentes)
+// input.input-legacy,
+// input[class*="-input-legacy"],
+// textarea[class*="-textarea-legacy"] {
+//   display: block;
+//   width: 100%;
+//   height: var(--input-height);
+//   padding: var(--input-padding);
+//   font-size: var(--font-size3);
+//   line-height: var(--line-height2);
+//   color: var(--input-color);
+//   background-color: var(--input-bg);
+//   background-clip: padding-box;
+//   border: var(--input-border-width) solid var(--input-border-color);
+//   border-radius: var(--input-border-radius);
+//   transition: var(--transition-focus);
+
+//   &:focus {
+//     outline: 0;
+//     border-color: var(--input-focus-border-color);
+//     box-shadow: var(--focus-shadow2);
+//   }
+
+//   &::placeholder {
+//     color: var(--input-placeholder-color);
+//     opacity: 1;
+//   }
+
+//   &:disabled {
+//     background-color: var(--input-disabled-bg);
+//     opacity: 1;
+//     cursor: not-allowed;
+//   }
+
+//   // Valid state
+//   &.valid {
+//     border-color: var(--input-valid-border-color);
+
+//     &:focus {
+//       border-color: var(--input-valid-focus-border-color);
+//       box-shadow: var(--success-shadow);
+//     }
+//   }
+
+//   // Invalid state
+//   &.invalid {
+//     border-color: var(--input-invalid-border-color);
+
+//     &:focus {
+//       border-color: var(--input-invalid-focus-border-color);
+//       box-shadow: var(--error-shadow);
+//     }
+//   }
+// }
+
+// // Textarea specific styles (mantido para compatibilidade)
+// textarea[class*="-textarea-legacy"] {
+//   height: auto;
+//   min-height: calc(var(--input-height) * 2);
+//   resize: vertical;
+// }

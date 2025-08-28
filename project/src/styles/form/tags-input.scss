@@ -1,0 +1,199 @@
+// Tags Input Styles
+.tags-input-wrapper {
+  .tags-input-container {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: var(--input-height);
+    padding: var(--spacing1);
+    border: var(--input-border-width) solid var(--input-border-color);
+    border-radius: var(--input-border-radius);
+    background-color: var(--input-bg);
+    cursor: text;
+    transition: var(--transition-focus);
+    gap: var(--spacing1);
+    
+    &:focus-within {
+      border-color: var(--input-focus-border-color);
+      box-shadow: var(--focus-shadow2);
+    }
+    
+    &.valid {
+      border-color: var(--input-valid-border-color);
+    }
+    
+    &.invalid {
+      border-color: var(--input-invalid-border-color);
+    }
+    
+    &.disabled {
+      background-color: var(--input-disabled-bg);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+  
+  .tags-left-icon {
+    color: var(--input-icon-color);
+    margin-right: var(--spacing1);
+  }
+  
+  .tags-content {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing1);
+    position: relative;
+  }
+  
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing1);
+  }
+  
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing1);
+    padding: calc(var(--spacing1) / 2) var(--spacing1);
+    border-radius: var(--border-radius1);
+    font-size: var(--font-size2);
+    line-height: 1;
+    user-select: none;
+    max-width: 200px;
+    
+    .tag-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .tag-remove-icon {
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 2px;
+      transition: var(--transition-focus);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    // Color variations
+    &.tag-primary {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+    }
+    
+    &.tag-success {
+      background-color: var(--color-success);
+      color: var(--color-white);
+    }
+    
+    &.tag-warning {
+      background-color: var(--color-warning);
+      color: var(--color-white);
+    }
+    
+    &.tag-danger {
+      background-color: var(--color-danger);
+      color: var(--color-white);
+    }
+    
+    &.tag-info {
+      background-color: var(--color-info);
+      color: var(--color-white);
+    }
+  }
+  
+  .tags-input {
+    flex: 1;
+    min-width: 100px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: var(--font-size3);
+    color: var(--input-color);
+    padding: var(--spacing1) 0;
+    
+    &::placeholder {
+      color: var(--input-placeholder-color);
+    }
+    
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+  
+  .tags-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--border-radius1);
+    box-shadow: var(--shadow2);
+    max-height: 200px;
+    overflow-y: auto;
+    
+    .tags-suggestion {
+      padding: var(--spacing2);
+      cursor: pointer;
+      border-bottom: 1px solid var(--input-border-color);
+      transition: var(--transition-focus);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover,
+      &.selected {
+        background-color: var(--hover-bg);
+      }
+      
+      &.selected {
+        background-color: var(--color-primary-alpha);
+        color: var(--color-primary);
+      }
+    }
+  }
+  
+  .tags-validation-icon {
+    margin-left: var(--spacing1);
+    
+    &.loading {
+      color: var(--color-info);
+    }
+    
+    &.success {
+      color: var(--color-success);
+    }
+    
+    &.danger {
+      color: var(--color-danger);
+    }
+  }
+  
+  .tags-counter {
+    display: block;
+    margin-top: var(--spacing1);
+    font-size: var(--font-size1);
+    color: var(--input-placeholder-color);
+    text-align: right;
+  }
+  
+  // States
+  &:hover:not(.disabled) .tags-input-container {
+    border-color: var(--input-focus-border-color);
+  }
+  
+  // Focus states
+  .tags-input:focus {
+    outline: none;
+  }
+}

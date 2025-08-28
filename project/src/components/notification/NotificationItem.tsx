@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Icon } from '../components/Icon';
-import { classBuilder } from '../helpers';
+import { Icon } from '../Icon';
+import { classBuilder } from '../../helpers';
 
 export interface NotificationItemProps {
   id: string;

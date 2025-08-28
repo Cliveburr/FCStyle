@@ -59,6 +59,7 @@ $colors: (
         background-color: var(--#{$color}-color);
         color: var(--#{$color}-bg);
         border-color: var(--#{$color}-color);
+        border: var(--border2) solid;
 
         .hoverable:hover:not(:disabled) {
             background-color: var(--#{$color}-hover-color);

@@ -815,6 +815,479 @@ Input with label and error message display.
 - `errorMessage`: Custom error message
 - All Input props
 
+## Advanced Input Components
+
+FCStyle provides a comprehensive set of specialized input components for different use cases, all following the same philosophy and validation patterns.
+
+### ColorInput
+
+Input for color selection with integrated color picker.
+
+```tsx
+import { ColorInput } from 'fcstyle';
+
+// Basic color input
+<ColorInput
+  placeholder="Selecione uma cor"
+  value="#ff0000"
+  onChange={(color) => console.log(color)}
+/>
+
+// With validation
+const colorValidator = new ValidatorControl([
+  CommonValidators.required('Cor é obrigatória'),
+  CommonValidators.pattern(/^#[0-9A-F]{6}$/i, 'Formato inválido')
+]);
+
+<ColorInput
+  leftIcon="palette"
+  validatorControl={colorValidator}
+  onChange={(color) => setSelectedColor(color)}
+/>
+```
+
+**Props:**
+- `leftIcon`: Left icon name
+- `onChange`: Color change callback
+- All standard input and validation props
+
+### NumberInput
+
+Input specifically for numeric values with automatic validation.
+
+```tsx
+import { NumberInput } from 'fcstyle';
+
+// Basic number input
+<NumberInput
+  placeholder="Digite um número"
+  min={0}
+  max={100}
+  leftIcon="calculator"
+  onChange={(value) => console.log(value)}
+/>
+
+// With validation
+const numberValidator = new ValidatorControl([
+  CommonValidators.required('Número é obrigatório'),
+  CommonValidators.min(0, 'Deve ser positivo'),
+  CommonValidators.max(100, 'Máximo 100')
+]);
+
+<NumberInput
+  validatorControl={numberValidator}
+  loading={isValidating}
+  onChange={(value) => setNumber(parseFloat(value))}
+/>
+```
+
+**Props:**
+- `leftIcon`: Left icon name
+- `loading`: Show loading spinner
+- `onChange`: Value change callback
+- All standard input and validation props
+
+### TextInput
+
+General text input with mask support and textarea option. Features clickable icons that focus the input and visual states applied to the container. Uses a flexible CSS system with custom properties for responsive icon and padding management.
+
+```tsx
+import { TextInput } from 'fcstyle';
+
+// Basic text input with clickable left icon
+<TextInput
+  placeholder="Digite seu texto"
+  leftIcon="user"
+  onChange={(value) => console.log(value)}
+/>
+
+// As textarea with icon
+<TextInput
+  placeholder="Digite seu comentário"
+  asTextarea
+  areaRows={4}
+  leftIcon="comment"
+  onChange={(value) => setComment(value)}
+/>
+
+// With mask and validation
+<TextInput
+  placeholder="(00) 00000-0000"
+  mask="(99) 99999-9999"
+  leftIcon="phone"
+  validatorControl={phoneValidator}
+  onChange={(value) => setPhone(value)}
+/>
+
+// With different icon sizes and spacing
+<TextInput
+  placeholder="Large icons"
+  leftIcon="search"
+  className="input-large-icons"
+  one p br b
+/>
+
+<TextInput
+  placeholder="Small icons"
+  leftIcon="search"
+  className="input-small-icons"
+  one p br b
+/>
+
+<TextInput
+  placeholder="Tight spacing"
+  leftIcon="search"
+  className="input-tight"
+  one p br b
+/>
+
+<TextInput
+  placeholder="Loose spacing"
+  leftIcon="search"
+  className="input-loose"
+  one p br b
+/>
+```
+
+**Key Features:**
+- **Clickable Icons**: Left icon acts as a label that focuses the input when clicked
+- **Container States**: Focus, valid, and invalid states are applied to the div container
+- **Flexible Layout**: Input takes full available space with automatic padding adjustment
+- **Dynamic Spacing**: CSS custom properties automatically calculate spacing based on icon size
+- **Responsive Icons**: Support for different icon sizes (small, normal, large)
+- **Accessibility**: Proper label association with input for screen readers
+
+**CSS Architecture:**
+- Uses CSS Custom Properties for dynamic calculations
+- `flex: 1` ensures input takes all available space
+- Automatic padding adjustment based on icon presence and size
+- Supports icon size variations via CSS classes
+
+**Props:**
+- `leftIcon`: Left icon name (clickable, focuses input)
+- `loading`: Show loading spinner on right
+- `asTextarea`: Render as textarea
+- `areaRows`: Textarea rows (default: 3)
+- `mask`: Input mask pattern
+- `validatorControl`: Validation controller
+- All standard input props and style shortcuts
+
+**CSS Modifier Classes:**
+- `input-large-icons`: Larger icons (1.5rem)
+- `input-small-icons`: Smaller icons (1rem)
+- `input-tight`: Reduced side spacing
+- `input-loose`: Increased side spacing
+
+**Mask Patterns:**
+- `9`: Numeric digit
+- `A`: Uppercase letter
+- `a`: Lowercase letter
+- `*`: Any character
+
+### CheckboxInput
+
+Checkbox with enhanced styling and validation.
+
+```tsx
+import { CheckboxInput } from 'fcstyle';
+
+// Basic checkbox
+<CheckboxInput
+  label="Aceito os termos de uso"
+  icon="shield-check"
+  checked={isChecked}
+  onChange={(checked) => setIsChecked(checked)}
+/>
+
+// With validation
+const termsValidator = new ValidatorControl([
+  CommonValidators.custom(
+    (value) => value === 'true' ? ValidationStatus.Valid : ValidationStatus.Invalid,
+    'Você deve aceitar os termos'
+  )
+]);
+
+<CheckboxInput
+  label="Aceito os termos"
+  validatorControl={termsValidator}
+  onChange={(checked) => setAcceptedTerms(checked)}
+/>
+```
+
+**Props:**
+- `label`: Checkbox label
+- `icon`: Icon name
+- `loading`: Show loading spinner
+- `onChange`: Checked state callback
+- All standard input and validation props
+
+### RadioInput
+
+Radio button group with multiple options.
+
+```tsx
+import { RadioInput } from 'fcstyle';
+
+const options = [
+  { value: 'option1', label: 'Opção 1', icon: 'star' },
+  { value: 'option2', label: 'Opção 2', icon: 'heart' },
+  { value: 'option3', label: 'Opção 3', disabled: true }
+];
+
+// Basic radio group
+<RadioInput
+  name="choice"
+  options={options}
+  value={selectedValue}
+  onChange={(value) => setSelectedValue(value)}
+/>
+
+// Horizontal layout
+<RadioInput
+  name="choice"
+  options={options}
+  direction="horizontal"
+  onChange={(value) => setChoice(value)}
+/>
+```
+
+**Props:**
+- `name`: Radio group name
+- `options`: Array of radio options
+- `value`: Selected value
+- `direction`: 'vertical' | 'horizontal'
+- `loading`: Show loading spinner
+- `onChange`: Selection callback
+- All validation props
+
+### FileInput
+
+File upload with drag & drop, preview, and validation.
+
+```tsx
+import { FileInput } from 'fcstyle';
+
+// Basic file input
+<FileInput
+  accept="image/*"
+  multiple
+  maxSize={5 * 1024 * 1024} // 5MB
+  onChange={(files) => console.log(files)}
+  onError={(error) => console.error(error)}
+/>
+
+// With restrictions
+<FileInput
+  maxFiles={3}
+  allowedTypes={['image/jpeg', 'image/png']}
+  showPreview
+  dragAndDrop
+  onChange={(files) => setSelectedFiles(files)}
+/>
+```
+
+**Props:**
+- `maxSize`: Maximum file size in bytes
+- `maxFiles`: Maximum number of files
+- `showPreview`: Show file previews
+- `allowedTypes`: Array of allowed MIME types
+- `dragAndDrop`: Enable drag & drop
+- `onError`: Error callback
+- All standard input and validation props
+
+### SliderInput
+
+Range slider for numeric values.
+
+```tsx
+import { SliderInput } from 'fcstyle';
+
+// Basic slider
+<SliderInput
+  min={0}
+  max={100}
+  step={1}
+  value={50}
+  onChange={(value) => console.log(value)}
+  showValue
+  unit="%"
+/>
+
+// With marks
+const marks = [
+  { value: 0, label: 'Min' },
+  { value: 50, label: 'Mid' },
+  { value: 100, label: 'Max' }
+];
+
+<SliderInput
+  min={0}
+  max={100}
+  marks={marks}
+  formatValue={(value) => `${value}%`}
+  onChange={(value) => setSliderValue(value)}
+/>
+```
+
+**Props:**
+- `min`, `max`, `step`: Range configuration
+- `showValue`: Display current value
+- `unit`: Value unit suffix
+- `formatValue`: Custom value formatter
+- `marks`: Array of slider marks
+- All validation props
+
+### SwitchInput
+
+Toggle switch with multiple sizes and colors.
+
+```tsx
+import { SwitchInput } from 'fcstyle';
+
+// Basic switch
+<SwitchInput
+  checked={isEnabled}
+  onChange={(checked) => setIsEnabled(checked)}
+  label="Ativar notificações"
+  leftIcon="bell"
+/>
+
+// Different sizes and colors
+<SwitchInput
+  size="large"
+  color="success"
+  labelPosition="left"
+  onChange={(checked) => setFeatureEnabled(checked)}
+/>
+```
+
+**Props:**
+- `label`: Switch label
+- `leftIcon`: Left icon name
+- `size`: 'small' | 'medium' | 'large'
+- `color`: 'primary' | 'success' | 'warning' | 'danger'
+- `labelPosition`: 'left' | 'right'
+- All validation props
+
+### DateInput
+
+Date selection with format support.
+
+```tsx
+import { DateInput } from 'fcstyle';
+
+// Basic date input
+<DateInput
+  value="2023-12-25"
+  onChange={(date) => console.log(date)}
+  min="2023-01-01"
+  max="2023-12-31"
+  leftIcon="calendar"
+/>
+
+// Different formats
+<DateInput
+  format="DD/MM/YYYY"
+  onChange={(date) => setSelectedDate(date)}
+/>
+```
+
+**Props:**
+- `format`: 'YYYY-MM-DD' | 'DD/MM/YYYY' | 'MM/DD/YYYY'
+- `showCalendarIcon`: Show calendar icon
+- All standard input and validation props
+
+### TimeInput
+
+Time selection with format options.
+
+```tsx
+import { TimeInput } from 'fcstyle';
+
+// Basic time input
+<TimeInput
+  value="14:30"
+  onChange={(time) => console.log(time)}
+  step={60}
+  leftIcon="clock"
+/>
+
+// With seconds and 12h format
+<TimeInput
+  format="12h"
+  showSeconds
+  onChange={(time) => setSelectedTime(time)}
+/>
+```
+
+**Props:**
+- `format`: '12h' | '24h'
+- `showSeconds`: Include seconds
+- `showClockIcon`: Show clock icon
+- All standard input and validation props
+
+### DatetimeInput
+
+Combined date and time selection.
+
+```tsx
+import { DatetimeInput } from 'fcstyle';
+
+// Basic datetime input
+<DatetimeInput
+  value="2023-12-25T14:30"
+  onChange={(datetime) => console.log(datetime)}
+  min="2023-01-01T00:00"
+  max="2023-12-31T23:59"
+  leftIcon="calendar-clock"
+/>
+
+// With seconds and "now" button
+<DatetimeInput
+  showSeconds
+  onChange={(datetime) => setSelectedDatetime(datetime)}
+/>
+```
+
+**Props:**
+- `showSeconds`: Include seconds
+- `showCalendarIcon`: Show calendar icon
+- All standard input and validation props
+
+### TagsInput
+
+Tag/chip input with autocomplete.
+
+```tsx
+import { TagsInput } from 'fcstyle';
+
+// Basic tags input
+<TagsInput
+  value={['React', 'TypeScript', 'CSS']}
+  onChange={(tags) => setTags(tags)}
+  placeholder="Digite uma tag..."
+/>
+
+// With suggestions and limits
+<TagsInput
+  suggestions={['JavaScript', 'Vue', 'Angular', 'React', 'TypeScript']}
+  maxTags={10}
+  allowCustomTags
+  tagColor="primary"
+  onChange={(tags) => setSelectedTags(tags)}
+/>
+```
+
+**Props:**
+- `suggestions`: Array of suggested tags
+- `maxTags`: Maximum number of tags
+- `allowDuplicates`: Allow duplicate tags
+- `separator`: Array of separators
+- `tagColor`: Tag color theme
+- `allowCustomTags`: Allow custom tags
+- `minLength`, `maxLength`: Tag length limits
+- All validation props
+
 ## Grid System
 
 ### Place

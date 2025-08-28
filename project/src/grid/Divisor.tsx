@@ -274,5 +274,3 @@ export const Divisor: React.FC<DivisorProps> = ({
     </div>
   );
 };
-
-export default Divisor;
