@@ -3,26 +3,10 @@ import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente FileInput
- * 
- * Input para upload de arquivos com preview e validação
- * 
- * Exemplo de uso:
- * ```tsx
- * import { FileInput } from 'fcstyle';
- * 
- * <FileInput
- *   accept="image/*"
- *   multiple
- *   maxSize={5 * 1024 * 1024} // 5MB
- *   onChange={(files) => console.log(files)}
- *   onError={(error) => console.error(error)}
- * />
- * ```
- */
-export interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'onError'> {
+export interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'onError' | 'size'>,
+  ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   validatorControl?: ValidatorControl;
   className?: string;
   onChange?: (files: FileList | null) => void;
@@ -34,11 +18,13 @@ export interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
   allowedTypes?: string[];
   dragAndDrop?: boolean;
   loading?: boolean;
+  li?: string;
+  leftIcon?: IconSet;
 }
 
 export const FileInput: React.FC<FileInputProps> = ({
   validatorControl,
-  className = '',
+  className,
   onChange,
   onValidationChange,
   onError,
@@ -48,12 +34,14 @@ export const FileInput: React.FC<FileInputProps> = ({
   allowedTypes,
   dragAndDrop = true,
   loading = false,
+  li,
+  leftIcon,
   multiple = false,
   ...props
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
-  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [inputId] = useState<string>(`fileinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
   const [isDragOver, setIsDragOver] = useState(false);
   const [previews, setPreviews] = useState<{ [key: string]: string }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,8 +50,6 @@ export const FileInput: React.FC<FileInputProps> = ({
   useEffect(() => {
     if (validatorControl) {
       const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(currentResult.status, currentResult.messages[0] || '');
@@ -121,8 +107,9 @@ export const FileInput: React.FC<FileInputProps> = ({
       if (onError) {
         onError(validation.error!);
       }
-      setValidationStatus(ValidationStatus.Invalid);
-      setValidationMessage(validation.error!);
+      if (onValidationChange) {
+        onValidationChange(ValidationStatus.Invalid, validation.error!);
+      }
       return;
     }
 
@@ -189,8 +176,6 @@ export const FileInput: React.FC<FileInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(files.length.toString());
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(result.status, result.messages[0] || '');
@@ -198,15 +183,31 @@ export const FileInput: React.FC<FileInputProps> = ({
     }
   };
 
-  const getValidationIcon = () => {
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
+  const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="file-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="file-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="file-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
@@ -242,17 +243,31 @@ export const FileInput: React.FC<FileInputProps> = ({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 file-input-wrapper')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .if('drag-over', isDragOver)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper file-input-wrapper">
+    <div className={classNames}>
+      {getLeftIcon()}
       <div 
-        className={getContainerClassNames()}
+        className="file-input-container"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
         <input
-          {...props}
+          {...domProps}
           ref={fileInputRef}
           type="file"
           multiple={multiple}
@@ -280,7 +295,7 @@ export const FileInput: React.FC<FileInputProps> = ({
             )}
           </div>
           
-          {getValidationIcon()}
+          {getRightIcon()}
         </Place>
       </div>
       
@@ -317,8 +332,8 @@ export const FileInput: React.FC<FileInputProps> = ({
         </div>
       )}
       
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
+      {validationStatus === ValidationStatus.Invalid && (
+        <span className="input-error-message">Invalid file selection</span>
       )}
     </div>
   );

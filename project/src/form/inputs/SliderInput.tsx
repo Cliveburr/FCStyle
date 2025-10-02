@@ -3,30 +3,13 @@ import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente SliderInput
- * 
- * Slider para seleção de valores numéricos com range
- * 
- * Exemplo de uso:
- * ```tsx
- * import { SliderInput } from 'fcstyle';
- * 
- * <SliderInput
- *   min={0}
- *   max={100}
- *   step={1}
- *   value={50}
- *   onChange={(value) => console.log(value)}
- *   showValue
- *   unit="%"
- * />
- * ```
- */
-export interface SliderInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
-  validatorControl?: ValidatorControl;
+export interface SliderInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: number) => void;
   onValidationChange?: (status: ValidationStatus, message: string) => void;
   min?: number;
@@ -37,12 +20,14 @@ export interface SliderInputProps extends Omit<React.InputHTMLAttributes<HTMLInp
   unit?: string;
   formatValue?: (value: number) => string;
   loading?: boolean;
+  li?: string;
+  leftIcon?: IconSet;
   marks?: { value: number; label: string }[];
 }
 
 export const SliderInput: React.FC<SliderInputProps> = ({
   validatorControl,
-  className = '',
+  className,
   onChange,
   onValidationChange,
   min = 0,
@@ -53,11 +38,14 @@ export const SliderInput: React.FC<SliderInputProps> = ({
   unit = '',
   formatValue,
   loading = false,
+  li,
+  leftIcon,
   marks = [],
   ...props
 }) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
+  const [inputId] = useState<string>(`sliderinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
   const [validationMessage, setValidationMessage] = useState<string>('');
 
   // Atualiza o valor inicial se props.value mudar
@@ -71,8 +59,6 @@ export const SliderInput: React.FC<SliderInputProps> = ({
   useEffect(() => {
     if (validatorControl) {
       const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(currentResult.status, currentResult.messages[0] || '');
@@ -94,8 +80,6 @@ export const SliderInput: React.FC<SliderInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(val.toString());
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(result.status, result.messages[0] || '');
@@ -103,15 +87,31 @@ export const SliderInput: React.FC<SliderInputProps> = ({
     }
   };
 
-  const getValidationIcon = () => {
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
+  const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="slider-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="slider-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="slider-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
@@ -148,8 +148,21 @@ export const SliderInput: React.FC<SliderInputProps> = ({
     return ((sliderValue - min) / (max - min)) * 100;
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 slider-input-wrapper')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper slider-input-wrapper">
+    <div className={classNames}>
+      {getLeftIcon()}
       <div className="slider-container">
         {/* Label com valor atual */}
         {showValue && (
@@ -163,14 +176,14 @@ export const SliderInput: React.FC<SliderInputProps> = ({
         {/* Container do slider */}
         <div className="slider-track-container">
           <input
-            {...props}
+            {...domProps}
             type="range"
             min={min}
             max={max}
             step={step}
             value={sliderValue}
             onChange={handleSliderChange}
-            className={getSliderClassNames()}
+            className="slider-input"
           />
           
           {/* Track preenchida */}
@@ -197,11 +210,11 @@ export const SliderInput: React.FC<SliderInputProps> = ({
         </div>
         
         {/* Ícone de validação */}
-        {getValidationIcon()}
+        {getRightIcon()}
       </div>
       
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
+      {validationStatus === ValidationStatus.Invalid && (
+        <span className="input-error-message">Invalid value</span>
       )}
     </div>
   );

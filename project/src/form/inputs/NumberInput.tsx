@@ -2,46 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente NumberInput
- * 
- * Input específico para números com validação automática
- * 
- * Exemplo de uso:
- * ```tsx
- * import { NumberInput } from 'fcstyle';
- * 
- * <NumberInput
- *   placeholder="Digite um número"
- *   min={0}
- *   max={100}
- *   leftIcon="calculator"
- *   onChange={(value) => console.log(value)}
- * />
- * ```
- */
-export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
-  validatorControl?: ValidatorControl;
+export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
-  onValidationChange?: (status: ValidationStatus, message: string) => void;
-  leftIcon?: string;
+  li?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
+  className,
+  
   validatorControl,
-  className = '',
   onChange,
-  onValidationChange,
+  li,
   leftIcon,
   loading = false,
+
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(props.value?.toString() || '');
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
-  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [inputId] = useState<string>(`numberinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
 
   // Atualiza o valor inicial se props.value mudar
   useEffect(() => {
@@ -49,19 +36,6 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       setInputValue(props.value.toString());
     }
   }, [props.value]);
-
-  // Monitora mudanças no ValidatorControl
-  useEffect(() => {
-    if (validatorControl) {
-      const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(currentResult.status, currentResult.messages[0] || '');
-      }
-    }
-  }, [validatorControl, inputValue, onValidationChange]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -82,68 +56,64 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(value);
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(result.status, result.messages[0] || '');
-      }
     }
   };
 
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
   const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="input-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="input-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="input-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
   };
 
-  const getInputClassNames = () => {
-    const baseClasses = ['number-input'];
-    
-    if (validationStatus === ValidationStatus.Valid) {
-      baseClasses.push('valid');
-    } else if (validationStatus === ValidationStatus.Invalid) {
-      baseClasses.push('invalid');
-    }
-    
-    if (className) {
-      baseClasses.push(className);
-    }
-    
-    return baseClasses.join(' ');
-  };
+  const { domProps, classNames } = classBuilder('input gap1')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
 
   return (
-    <div className="input-wrapper number-input-wrapper">
-      <div className="input-container-with-icons">
-        {leftIcon && (
-          <Icon name={leftIcon} className="input-left-icon" />
-        )}
-        
-        <input
-          {...props}
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          value={inputValue}
-          onChange={handleInputChange}
-          className={getInputClassNames()}
-        />
-        
-        {getRightIcon()}
-      </div>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+    <div className={classNames}>
+      {getLeftIcon()}
+      <input
+        {...domProps}
+        id={inputId}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+      {getRightIcon()}
     </div>
   );
 };

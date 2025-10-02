@@ -4,29 +4,16 @@ import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente ColorInput
- * 
- * Input para seleção de cores com ColorPicker integrado no dropdown
- * 
- * Exemplo de uso:
- * ```tsx
- * import { ColorInput } from 'fcstyle';
- * 
- * <ColorInput
- *   placeholder="Selecione uma cor"
- *   value="#ff0000"
- *   onChange={(color) => console.log(color)}
- * />
- * ```
- */
-export interface ColorInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
-  validatorControl?: ValidatorControl;
+export interface ColorInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
-  onValidationChange?: (status: ValidationStatus, message: string) => void;
-  leftIcon?: string;
+  li?: string;
+  leftIcon?: IconSet;
 }
 
 const PRESET_COLORS = [
@@ -37,17 +24,19 @@ const PRESET_COLORS = [
 ];
 
 export const ColorInput: React.FC<ColorInputProps> = ({
+  className,
+  
   validatorControl,
-  className = '',
   onChange,
-  onValidationChange,
+  li,
   leftIcon,
+
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(props.value?.toString() || '');
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
-  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [inputId] = useState<string>(`colorinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
 
   // Atualiza o valor inicial se props.value mudar
   useEffect(() => {
@@ -55,19 +44,6 @@ export const ColorInput: React.FC<ColorInputProps> = ({
       setInputValue(props.value.toString());
     }
   }, [props.value]);
-
-  // Monitora mudanças no ValidatorControl
-  useEffect(() => {
-    if (validatorControl) {
-      const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(currentResult.status, currentResult.messages[0] || '');
-      }
-    }
-  }, [validatorControl, inputValue, onValidationChange]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -93,38 +69,31 @@ export const ColorInput: React.FC<ColorInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(value);
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(result.status, result.messages[0] || '');
-      }
     }
   };
 
-  const getValidationIcon = () => {
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
+  const getRightIcon = () => {
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="input-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="input-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
+    
     return null;
-  };
-
-  const getInputClassNames = () => {
-    const baseClasses = ['color-input'];
-    
-    if (validationStatus === ValidationStatus.Valid) {
-      baseClasses.push('valid');
-    } else if (validationStatus === ValidationStatus.Invalid) {
-      baseClasses.push('invalid');
-    }
-    
-    if (className) {
-      baseClasses.push(className);
-    }
-    
-    return baseClasses.join(' ');
   };
 
   const isValidColor = (color: string) => {
@@ -155,47 +124,51 @@ export const ColorInput: React.FC<ColorInputProps> = ({
     </Place>
   );
 
+  const { domProps, classNames } = classBuilder('input gap1 color-input-wrapper')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper color-input-wrapper">
-      <div className="input-container-with-icons">
-        {leftIcon && (
-          <Icon name={leftIcon} className="input-left-icon" />
-        )}
-        
-        <input
-          {...props}
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          className={getInputClassNames()}
-        />
-        
-        <Dropdown
-          label=""
-          isOpen={isDropdownOpen}
-          onToggle={setIsDropdownOpen}
-          closeOnClickOutside={true}
-          closeOnItemSelect={false}
-          direction="down"
-          className="color-dropdown-trigger"
-        >
-          <ColorPicker />
-        </Dropdown>
-        
-        <div 
-          className="color-preview"
-          style={{ backgroundColor: isValidColor(inputValue) ? inputValue : 'transparent' }}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          <Icon name="droplet" className="color-preview-icon" />
-        </div>
-        
-        {getValidationIcon()}
-      </div>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+    <div className={classNames}>
+      {getLeftIcon()}
+      <input
+        {...domProps}
+        id={inputId}
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+  className="color-input"
+      />
+
+      <Dropdown
+        label=""
+        trigger={
+          <button
+            type="button"
+            className="color-trigger"
+            aria-label="Selecionar cor"
+            style={{ backgroundColor: isValidColor(inputValue) ? inputValue : 'transparent' }}
+          />
+        }
+        isOpen={isDropdownOpen}
+        onToggle={setIsDropdownOpen}
+        closeOnClickOutside={true}
+        closeOnItemSelect={false}
+        direction="down"
+        className="color-dropdown-trigger"
+      >
+        <ColorPicker />
+      </Dropdown>
+
+      {getRightIcon()}
     </div>
   );
 };

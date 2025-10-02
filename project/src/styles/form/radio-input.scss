@@ -63,11 +63,13 @@
         height: 8px;
         border-radius: 50%;
         background-color: var(--color-primary);
+        transition: transform .15s ease;
       }
     }
     
     .radio-input:checked + .radio-custom {
       border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-alpha);
     }
     
     .radio-input:focus + .radio-custom {

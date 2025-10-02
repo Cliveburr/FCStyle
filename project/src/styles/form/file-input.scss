@@ -10,7 +10,8 @@
     
     &:hover:not(.disabled) {
       border-color: var(--input-focus-border-color);
-      background-color: var(--hover-bg);
+  background-color: var(--hover-bg);
+  box-shadow: var(--focus-shadow1);
     }
     
     &.drag-over {
@@ -87,6 +88,9 @@
   .file-preview-item {
     padding: var(--spacing2);
     border-bottom: 1px solid var(--input-border-color);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing2);
     
     &:last-child {
       border-bottom: none;
@@ -101,8 +105,8 @@
   }
   
   .file-preview-icon {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;

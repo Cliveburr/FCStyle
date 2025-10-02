@@ -2,50 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente TimeInput
- * 
- * Input para seleção de horários com validação
- * 
- * Exemplo de uso:
- * ```tsx
- * import { TimeInput } from 'fcstyle';
- * 
- * <TimeInput
- *   value="14:30"
- *   onChange={(time) => console.log(time)}
- *   step={60} // 1 minuto
- *   leftIcon="clock"
- * />
- * ```
- */
-export interface TimeInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
-  validatorControl?: ValidatorControl;
+export interface TimeInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
   onValidationChange?: (status: ValidationStatus, message: string) => void;
-  leftIcon?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
   format?: '12h' | '24h';
   showSeconds?: boolean;
   showClockIcon?: boolean;
+  li?: string;
 }
 
 export const TimeInput: React.FC<TimeInputProps> = ({
   validatorControl,
-  className = '',
+  className,
   onChange,
   onValidationChange,
-  leftIcon = 'clock',
+  leftIcon,
   loading = false,
   format = '24h',
   showSeconds = false,
   showClockIcon = true,
+  li,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(props.value?.toString() || '');
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
+  const [inputId] = useState<string>(`timeinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
   const [validationMessage, setValidationMessage] = useState<string>('');
 
   // Atualiza o valor inicial se props.value mudar
@@ -59,8 +48,6 @@ export const TimeInput: React.FC<TimeInputProps> = ({
   useEffect(() => {
     if (validatorControl) {
       const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(currentResult.status, currentResult.messages[0] || '');
@@ -130,8 +117,6 @@ export const TimeInput: React.FC<TimeInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(value);
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(result.status, result.messages[0] || '');
@@ -139,15 +124,31 @@ export const TimeInput: React.FC<TimeInputProps> = ({
     }
   };
 
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : (showClockIcon ? { name: 'clock' } : undefined));
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
   const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="input-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="input-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="input-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
@@ -188,29 +189,32 @@ export const TimeInput: React.FC<TimeInputProps> = ({
     return showSeconds ? 1 : 60;
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 time-input-wrapper input-container-with-icons')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper time-input-wrapper">
-      <div className="input-container-with-icons">
-        {(leftIcon || showClockIcon) && (
-          <Icon name={leftIcon || 'clock'} className="input-left-icon" />
-        )}
-        
-        <input
-          {...props}
-          type={getInputType()}
-          value={inputValue}
-          onChange={handleInputChange}
-          className={getInputClassNames()}
-          placeholder={getPlaceholder()}
-          step={getStepValue()}
-        />
-        
-        {getRightIcon()}
-      </div>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+    <div className={classNames}>
+      {getLeftIcon()}
+      <input
+        {...domProps}
+        id={inputId}
+        type={getInputType()}
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder={getPlaceholder()}
+        step={getStepValue()}
+  className="time-input"
+      />
+      {getRightIcon()}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts } from '../../helpers';
 
 /**
  * Propriedades do componente TagsInput
@@ -22,7 +23,7 @@ import { Place } from '../../grid/Place';
  * />
  * ```
  */
-export interface TagsInputProps {
+export interface TagsInputProps extends ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   value?: string[];
   onChange?: (tags: string[]) => void;
   onValidationChange?: (status: ValidationStatus, message: string) => void;
@@ -36,6 +37,7 @@ export interface TagsInputProps {
   disabled?: boolean;
   loading?: boolean;
   leftIcon?: string;
+  li?: string;
   tagColor?: 'primary' | 'success' | 'warning' | 'danger' | 'info';
   allowCustomTags?: boolean;
   minLength?: number;
@@ -286,13 +288,30 @@ export const TagsInput: React.FC<TagsInputProps> = ({
     return `tag tag-${tagColor}`;
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 tags-input-wrapper')
+    .add(className)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build({});
+
+  const containerStateClass = [
+    'tags-input-container',
+    validationStatus === ValidationStatus.Valid ? 'valid' : '',
+    validationStatus === ValidationStatus.Invalid ? 'invalid' : '',
+    disabled ? 'disabled' : ''
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className="input-wrapper tags-input-wrapper">
-      <div className={getContainerClassNames()} onClick={() => inputRef.current?.focus()}>
-        {leftIcon && (
+    <div className={classNames}>
+      <div className={containerStateClass} onClick={() => inputRef.current?.focus()}>
+        {(leftIcon || undefined) && (
           <Icon name={leftIcon} className="tags-left-icon" />
         )}
-        
+
         <div className="tags-content">
           {/* Tags existentes */}
           {tags.length > 0 && (
@@ -347,7 +366,6 @@ export const TagsInput: React.FC<TagsInputProps> = ({
         
         {getValidationIcon()}
       </div>
-      
       {validationStatus === ValidationStatus.Invalid && validationMessage && (
         <span className="input-error-message">{validationMessage}</span>
       )}

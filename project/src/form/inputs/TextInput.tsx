@@ -2,50 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
-import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts } from '../../helpers';
-
-/**
- * Propriedades do componente TextInput
- * 
- * Input de texto geral com suporte a mask e textarea
- * Não exibe mensagens de erro - isso é responsabilidade do TextField
- * 
- * Exemplo de uso:
- * ```tsx
- * import { TextInput } from 'fcstyle';
- * 
- * // Input simples
- * <TextInput
- *   placeholder="Digite seu texto"
- *   leftIcon="user"
- *   onChange={(value) => console.log(value)}
- * />
- * 
- * // Como textarea
- * <TextInput
- *   placeholder="Digite seu comentário"
- *   asTextarea
- *   rows={4}
- *   onChange={(value) => console.log(value)}
- * />
- * 
- * // Com máscara
- * <TextInput
- *   placeholder="(00) 00000-0000"
- *   mask="(99) 99999-9999"
- *   leftIcon="phone"
- *   onChange={(value) => console.log(value)}
- * />
- * 
- * // Com validação (apenas para ícones)
- * <TextInput
- *   placeholder="Email"
- *   leftIcon="envelope"
- *   validatorControl={emailValidator}
- *   onChange={(value) => console.log(value)}
- * />
- * ```
- */
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
 export interface TextInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
 ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
@@ -53,7 +10,8 @@ ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcut
   
   validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
-  leftIcon?: string;
+  li?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
   asTextarea?: boolean;
   areaRows?: number;
@@ -65,6 +23,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   
   validatorControl,
   onChange,
+  li,
   leftIcon,
   loading = false,
   asTextarea = false,
@@ -175,9 +134,11 @@ export const TextInput: React.FC<TextInputProps> = ({
   };
 
   const getLeftIcon = () => {
-    return leftIcon && (
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
       <label htmlFor={inputId} >
-        <Icon name={leftIcon} />
+        <Icon icon={resolvedLeftIcon} />
       </label>
     )
   }
@@ -211,26 +172,23 @@ export const TextInput: React.FC<TextInputProps> = ({
     .addBuilder(PaddingBuilder, { size: 2})
     .addBuilder(BorderBuilder, { width: 2, round: 2})
     .addBuilder(FlexChildrenBuilder)
-    .addBuilder(SizeBuilder)
+    .addBuilder(SizeBuilder, { width: 3 })
     .build(props);
 
   if (asTextarea) {
     return (
-      <div className="input-wrapper text-input-wrapper">
-        <div className="input-container-with-icons textarea-container">
-          {getLeftIcon()}
-          <textarea
-            id={inputId}
-            value={inputValue}
-            onChange={handleInputChange}
-            className={classNames}
-            rows={areaRows}
-            placeholder={props.placeholder}
-            disabled={props.disabled}
-            required={props.required}
-          />
-          {getRightIcon()}
-        </div>
+      <div className={classNames + "textarea-container"}>
+        {getLeftIcon()}
+        <textarea
+          id={inputId}
+          value={inputValue}
+          onChange={handleInputChange}
+          rows={areaRows}
+          placeholder={props.placeholder}
+          disabled={props.disabled}
+          required={props.required}
+        />
+        {getRightIcon()}
       </div>
     );
   }

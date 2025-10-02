@@ -17,6 +17,8 @@ export interface DropdownProps extends
   li?: string;
   as?: 'button' | 'link' | 'submit' | 'reset',
   label?: string;
+  // Conteúdo customizado do trigger (substitui label quando presente)
+  trigger?: React.ReactNode;
   disabled?: boolean;
   
   // Configurações específicas do dropdown
@@ -43,6 +45,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   style,
   
   label = 'Dropdown',
+  trigger,
   as,
   disabled = false,
   
@@ -150,7 +153,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   // Button props
   const buttonProps = {
     li: (typeof leftIcon === 'string' ? leftIcon : undefined) || li,
-    ri: isOpen ? 'chevron-up' : 'chevron-down',
+    // Only show caret when using label-based trigger
+    ri: trigger ? undefined : (isOpen ? 'chevron-up' : 'chevron-down'),
     leftIcon: (typeof leftIcon !== 'string' ? leftIcon : undefined),
     disabled,
     as,
@@ -159,9 +163,35 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div ref={dropdownRef} className={classNames} {...domProps}>
-      <Button {...buttonProps} onClick={handleToggle}>
-        {label}
-      </Button>
+      {trigger ? (
+        React.isValidElement(trigger)
+          ? React.cloneElement(trigger as any, {
+              ...((trigger as any).props || {}),
+              className: [buttonClassNames, (trigger as any).props?.className].filter(Boolean).join(' '),
+              onClick: (e: React.MouseEvent) => {
+                (trigger as any).props?.onClick?.(e);
+                if (!disabled) handleToggle();
+              },
+              'aria-expanded': isOpen,
+              'aria-haspopup': 'menu'
+            } as any)
+          : (
+            <div
+              className={buttonClassNames}
+              role="button"
+              aria-expanded={isOpen}
+              aria-haspopup="menu"
+              onClick={disabled ? undefined : handleToggle}
+              style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+            >
+              {trigger}
+            </div>
+          )
+      ) : (
+        <Button {...buttonProps} onClick={handleToggle}>
+          {label}
+        </Button>
+      )}
       
       {isOpen && (
         <div className={contentClasses} style={contentStyle}>

@@ -18,7 +18,7 @@ const MenuPage: React.FC = () => {
     <Columns gap m>
       <Place w4>
         <h3>Menu Vertical</h3>
-        <Menu b white sh3 selectedValue={selectedValue} onItemSelect={handleItemSelect}>
+        <Menu b white sh selectedValue={selectedValue} onItemSelect={handleItemSelect}>
           <ListLabel>Seção Principal</ListLabel>
           <ListItem value="option1" li="home">Página Inicial</ListItem>
           <ListItem value="option2" li="user">Perfil</ListItem>

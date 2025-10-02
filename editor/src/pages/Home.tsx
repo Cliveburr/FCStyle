@@ -51,6 +51,36 @@ const Home: React.FC = () => {
           </ul>
         </section>
       </div>
+
+      <div
+        style={
+          {
+            display: 'flex',
+            gap: 12,
+            padding: 16,
+            background: '#eee',
+            borderRadius: 8,
+            width: '300px', // aumentado para ver melhor o efeito
+            overflow: 'hidden' // para cortar nos cantos
+          } as React.CSSProperties & Record<string, string | number>
+        }
+      >
+        <i></i>
+        <span>texto</span>
+        <button
+          style={{
+            minWidth: 0,
+            marginRight: -16,
+            marginTop: -16,
+            marginBottom: -16,
+            background: 'red',
+            border: 'none',
+            borderRadius: 0,
+          }}
+        >
+          Ação
+        </button>
+      </div>
     </Place>
            
 

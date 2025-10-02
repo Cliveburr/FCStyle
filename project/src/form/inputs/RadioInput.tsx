@@ -3,65 +3,48 @@ import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente RadioInput
- * 
- * Radio button com opções múltiplas
- * 
- * Exemplo de uso:
- * ```tsx
- * import { RadioInput } from 'fcstyle';
- * 
- * const options = [
- *   { value: 'option1', label: 'Opção 1', icon: 'star' },
- *   { value: 'option2', label: 'Opção 2', icon: 'heart' },
- *   { value: 'option3', label: 'Opção 3', disabled: true }
- * ];
- * 
- * <RadioInput
- *   name="choice"
- *   options={options}
- *   value={selectedValue}
- *   onChange={(value) => setSelectedValue(value)}
- * />
- * ```
- */
 export interface RadioOption {
   value: string;
   label: string;
-  icon?: string;
+  icon?: IconSet;
   disabled?: boolean;
 }
 
-export interface RadioInputProps {
-  name: string;
-  options: RadioOption[];
-  value?: string;
+export interface RadioInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
+  className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
   onValidationChange?: (status: ValidationStatus, message: string) => void;
-  validatorControl?: ValidatorControl;
-  className?: string;
+  options: RadioOption[];
+  value?: string;
+  li?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
-  disabled?: boolean;
   direction?: 'vertical' | 'horizontal';
 }
 
 export const RadioInput: React.FC<RadioInputProps> = ({
-  name,
-  options,
-  value = '',
+  className,
+  
+  validatorControl,
   onChange,
   onValidationChange,
-  validatorControl,
-  className = '',
+  options,
+  value = '',
+  li,
+  leftIcon,
   loading = false,
-  disabled = false,
-  direction = 'vertical'
+  direction = 'vertical',
+
+  ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>(value);
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
-  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [inputId] = useState<string>(`radioinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
 
   // Atualiza o valor inicial se props.value mudar
   useEffect(() => {
@@ -74,8 +57,6 @@ export const RadioInput: React.FC<RadioInputProps> = ({
   useEffect(() => {
     if (validatorControl) {
       const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(currentResult.status, currentResult.messages[0] || '');
@@ -96,8 +77,6 @@ export const RadioInput: React.FC<RadioInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(val);
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(result.status, result.messages[0] || '');
@@ -105,15 +84,31 @@ export const RadioInput: React.FC<RadioInputProps> = ({
     }
   };
 
-  const getValidationIcon = () => {
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : undefined);
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
+
+  const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="radio-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="radio-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="radio-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
@@ -128,7 +123,7 @@ export const RadioInput: React.FC<RadioInputProps> = ({
       baseClasses.push('invalid');
     }
     
-    if (disabled) {
+    if (props.disabled) {
       baseClasses.push('disabled');
     }
     
@@ -146,58 +141,61 @@ export const RadioInput: React.FC<RadioInputProps> = ({
       baseClasses.push('selected');
     }
     
-    if (option.disabled || disabled) {
+    if (option.disabled || props.disabled) {
       baseClasses.push('disabled');
     }
     
     return baseClasses.join(' ');
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 radio-input-wrapper')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .if('radio-horizontal', direction === 'horizontal')
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper radio-input-wrapper">
-      <Place className={getContainerClassNames()}>
-        <Place 
-          className="radio-options"
-          column={direction === 'vertical'}
-          gap2
-        >
-          {options.map((option, index) => (
-            <Place key={index} row alignCenter gap2 className={getOptionClassNames(option)}>
-              <div className="radio-wrapper">
-                <input
-                  type="radio"
-                  name={name}
-                  value={option.value}
-                  checked={selectedValue === option.value}
-                  onChange={() => handleRadioChange(option.value)}
-                  disabled={option.disabled || disabled}
-                  className="radio-input"
-                />
-                <div className="radio-custom">
-                  {selectedValue === option.value && <div className="radio-dot" />}
-                </div>
+    <div className={classNames}>
+      {getLeftIcon()}
+      <div className="radio-options">
+        {options.map((option, index) => (
+          <Place key={index} row alignCenter gap2 className="radio-option">
+            <div className="radio-wrapper">
+              <input
+                type="radio"
+                name={inputId}
+                value={option.value}
+                checked={selectedValue === option.value}
+                onChange={() => handleRadioChange(option.value)}
+                disabled={option.disabled || props.disabled}
+                className="radio-input"
+              />
+              <div className="radio-custom">
+                {selectedValue === option.value && <div className="radio-dot" />}
               </div>
-              
-              {option.icon && (
-                <Icon name={option.icon} className="radio-icon" />
-              )}
-              
-              <label 
-                className="radio-label"
-                onClick={() => !option.disabled && !disabled && handleRadioChange(option.value)}
-              >
-                {option.label}
-              </label>
-            </Place>
-          ))}
-        </Place>
-        
-        {getValidationIcon()}
-      </Place>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+            </div>
+            
+            {option.icon && (
+              <Icon icon={option.icon} className="radio-icon" />
+            )}
+            
+            <label 
+              className="radio-label"
+              onClick={() => !option.disabled && !props.disabled && handleRadioChange(option.value)}
+            >
+              {option.label}
+            </label>
+          </Place>
+        ))}
+      </div>
+      {getRightIcon()}
     </div>
   );
 };

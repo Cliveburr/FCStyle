@@ -3,54 +3,40 @@ import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
 import { Place } from '../../grid/Place';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente SwitchInput
- * 
- * Switch toggle estilizado para alternar entre estados
- * 
- * Exemplo de uso:
- * ```tsx
- * import { SwitchInput } from 'fcstyle';
- * 
- * <SwitchInput
- *   checked={isEnabled}
- *   onChange={(checked) => setIsEnabled(checked)}
- *   label="Ativar notificações"
- *   leftIcon="bell"
- *   size="medium"
- * />
- * ```
- */
-export interface SwitchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'> {
-  validatorControl?: ValidatorControl;
+export interface SwitchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (checked: boolean) => void;
   onValidationChange?: (status: ValidationStatus, message: string) => void;
   label?: string;
-  leftIcon?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
-  size?: 'small' | 'medium' | 'large';
-  color?: 'primary' | 'success' | 'warning' | 'danger';
-  labelPosition?: 'left' | 'right';
+  li?: string;
+  switchSize?: 'small' | 'medium' | 'large';
+  switchColor?: 'primary' | 'success' | 'warning' | 'danger';
 }
 
 export const SwitchInput: React.FC<SwitchInputProps> = ({
   validatorControl,
-  className = '',
+  className,
   onChange,
   onValidationChange,
   label,
   leftIcon,
   loading = false,
-  size = 'medium',
-  color = 'primary',
-  labelPosition = 'right',
+  li,
   checked = false,
+  switchSize = 'medium',
+  switchColor = 'primary',
   ...props
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(checked);
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
+  const [inputId] = useState<string>(`switchinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
   const [validationMessage, setValidationMessage] = useState<string>('');
 
   // Atualiza o valor inicial se props.checked mudar
@@ -64,8 +50,6 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
   useEffect(() => {
     if (validatorControl) {
       const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(currentResult.status, currentResult.messages[0] || '');
@@ -89,8 +73,6 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(value.toString());
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
       
       if (onValidationChange) {
         onValidationChange(result.status, result.messages[0] || '');
@@ -113,11 +95,13 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
   };
 
   const getSwitchClassNames = () => {
-    const baseClasses = ['switch-input', `switch-${size}`, `switch-${color}`];
+    const baseClasses = ['switch-input'];
     
     if (isChecked) {
       baseClasses.push('checked');
     }
+  baseClasses.push(`switch-${switchSize}`);
+  if (isChecked) baseClasses.push(`switch-${switchColor}`);
     
     if (validationStatus === ValidationStatus.Valid) {
       baseClasses.push('valid');
@@ -151,7 +135,7 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
     
     return (
       <Place row alignCenter gap1>
-        {leftIcon && <Icon name={leftIcon} className="switch-label-icon" />}
+        {leftIcon && <Icon icon={leftIcon} className="switch-label-icon" />}
         <label 
           className="switch-label"
           onClick={handleSwitchChange}
@@ -165,7 +149,6 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
   const renderSwitch = () => (
     <div className="switch-wrapper">
       <input
-        {...props}
         type="checkbox"
         checked={isChecked}
         onChange={() => {}} // Controlled via onClick
@@ -188,7 +171,7 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
       >
         <div className="switch-track">
           <div className="switch-thumb">
-            {loading && size !== 'small' && (
+            {loading && (
               <Icon name="spinner" spin className="switch-thumb-icon" />
             )}
           </div>
@@ -197,23 +180,22 @@ export const SwitchInput: React.FC<SwitchInputProps> = ({
     </div>
   );
 
+  const { domProps, classNames } = classBuilder('input gap1 switch-input-wrapper')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper switch-input-wrapper">
-      <Place row alignCenter gap2 className={getContainerClassNames()}>
-        {labelPosition === 'left' && renderLabel()}
-        
-        {renderSwitch()}
-        
-        {labelPosition === 'right' && renderLabel()}
-        
-        <div className="flex-grow" />
-        
-        {getValidationIcon()}
-      </Place>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+    <div className={classNames}>
+      {renderLabel()}
+      {renderSwitch()}
     </div>
   );
 };

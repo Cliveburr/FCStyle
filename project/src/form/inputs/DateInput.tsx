@@ -2,50 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { ValidatorControl } from '../../validator/ValidatorControl';
 import { ValidationStatus } from '../../validator/ValidationStatus';
 import { Icon } from '../../components/Icon';
+import { classBuilder, ColorBuilder, MarginBuilder, PaddingBuilder, BorderBuilder, FlexChildrenBuilder, SizeBuilder, ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts, IconSet } from '../../helpers';
 
-/**
- * Propriedades do componente DateInput
- * 
- * Input para seleção de datas com validação
- * 
- * Exemplo de uso:
- * ```tsx
- * import { DateInput } from 'fcstyle';
- * 
- * <DateInput
- *   value="2023-12-25"
- *   onChange={(date) => console.log(date)}
- *   min="2023-01-01"
- *   max="2023-12-31"
- *   leftIcon="calendar"
- * />
- * ```
- */
-export interface DateInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type'> {
-  validatorControl?: ValidatorControl;
+export interface DateInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'size'>,
+ColorShortcuts, PaddingShortcuts, MarginShortcuts, BorderShortcuts, SizeShortcuts, FlexChildrenShortcuts {
   className?: string;
+  
+  validatorControl?: ValidatorControl;
   onChange?: (value: string) => void;
-  onValidationChange?: (status: ValidationStatus, message: string) => void;
-  leftIcon?: string;
+  li?: string;
+  leftIcon?: IconSet;
   loading?: boolean;
   format?: 'YYYY-MM-DD' | 'DD/MM/YYYY' | 'MM/DD/YYYY';
   showCalendarIcon?: boolean;
 }
 
 export const DateInput: React.FC<DateInputProps> = ({
+  className,
+  
   validatorControl,
-  className = '',
   onChange,
-  onValidationChange,
-  leftIcon = 'calendar',
+  li,
+  leftIcon,
   loading = false,
   format = 'YYYY-MM-DD',
   showCalendarIcon = true,
+
   ...props
 }) => {
   const [inputValue, setInputValue] = useState<string>(props.value?.toString() || '');
-  const [validationStatus, setValidationStatus] = useState<ValidationStatus>(ValidationStatus.Pristine);
-  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [inputId] = useState<string>(`dateinput-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const validationStatus = validatorControl?.getStatus() ?? ValidationStatus.Pristine;
 
   // Atualiza o valor inicial se props.value mudar
   useEffect(() => {
@@ -53,19 +40,6 @@ export const DateInput: React.FC<DateInputProps> = ({
       setInputValue(props.value.toString());
     }
   }, [props.value]);
-
-  // Monitora mudanças no ValidatorControl
-  useEffect(() => {
-    if (validatorControl) {
-      const currentResult = validatorControl.validate();
-      setValidationStatus(currentResult.status);
-      setValidationMessage(currentResult.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(currentResult.status, currentResult.messages[0] || '');
-      }
-    }
-  }, [validatorControl, inputValue, onValidationChange]);
 
   const formatDateForDisplay = (value: string) => {
     if (!value) return value;
@@ -137,43 +111,37 @@ export const DateInput: React.FC<DateInputProps> = ({
     if (validatorControl) {
       validatorControl.setValue(value);
       const result = validatorControl.validate();
-      setValidationStatus(result.status);
-      setValidationMessage(result.messages[0] || '');
-      
-      if (onValidationChange) {
-        onValidationChange(result.status, result.messages[0] || '');
-      }
     }
   };
+
+  const getLeftIcon = () => {
+    const resolvedLeftIcon: IconSet | undefined = leftIcon || (li ? { name: li } : (showCalendarIcon ? { name: 'calendar' } : undefined));
+
+    return resolvedLeftIcon && (
+      <label htmlFor={inputId} >
+        <Icon icon={resolvedLeftIcon} />
+      </label>
+    )
+  }
 
   const getRightIcon = () => {
     if (loading) {
-      return <Icon name="spinner" spin className="input-validation-icon loading" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="spinner" spin className="loading" />
+      </label>)
     }
     
     if (validationStatus === ValidationStatus.Valid) {
-      return <Icon name="check" className="input-validation-icon success" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="check" className="success-inv" />
+      </label>)
     } else if (validationStatus === ValidationStatus.Invalid) {
-      return <Icon name="exclamation-circle" className="input-validation-icon danger" />;
+      return (<label htmlFor={inputId} >
+        <Icon name="exclamation-circle" className="danger-inv" />
+      </label>)
     }
     
     return null;
-  };
-
-  const getInputClassNames = () => {
-    const baseClasses = ['date-input'];
-    
-    if (validationStatus === ValidationStatus.Valid) {
-      baseClasses.push('valid');
-    } else if (validationStatus === ValidationStatus.Invalid) {
-      baseClasses.push('invalid');
-    }
-    
-    if (className) {
-      baseClasses.push(className);
-    }
-    
-    return baseClasses.join(' ');
   };
 
   const getPlaceholder = () => {
@@ -189,28 +157,31 @@ export const DateInput: React.FC<DateInputProps> = ({
     }
   };
 
+  const { domProps, classNames } = classBuilder('input gap1 date-input-wrapper input-container-with-icons')
+    .add(className)
+    .if('valid', validationStatus === ValidationStatus.Valid)
+    .if('invalid', validationStatus === ValidationStatus.Invalid)
+    .addBuilder(ColorBuilder, { variant: 'white', inverse: false })
+    .addBuilder(MarginBuilder)
+    .addBuilder(PaddingBuilder, { size: 2})
+    .addBuilder(BorderBuilder, { width: 2, round: 2})
+    .addBuilder(FlexChildrenBuilder)
+    .addBuilder(SizeBuilder)
+    .build(props);
+
   return (
-    <div className="input-wrapper date-input-wrapper">
-      <div className="input-container-with-icons">
-        {(leftIcon || showCalendarIcon) && (
-          <Icon name={leftIcon || 'calendar'} className="input-left-icon" />
-        )}
-        
-        <input
-          {...props}
-          type="date"
-          value={inputValue}
-          onChange={handleInputChange}
-          className={getInputClassNames()}
-          placeholder={getPlaceholder()}
-        />
-        
-        {getRightIcon()}
-      </div>
-      
-      {validationStatus === ValidationStatus.Invalid && validationMessage && (
-        <span className="input-error-message">{validationMessage}</span>
-      )}
+    <div className={classNames}>
+      {getLeftIcon()}
+      <input
+        {...domProps}
+        id={inputId}
+        type="date"
+        value={inputValue}
+        onChange={handleInputChange}
+  className="date-input"
+        placeholder={getPlaceholder()}
+      />
+      {getRightIcon()}
     </div>
   );
 };

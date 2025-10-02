@@ -523,11 +523,28 @@ const [selectedValue, setSelectedValue] = useState('');
   <ListItem value="option1">Option 1</ListItem>
   <ListItem value="option2">Option 2</ListItem>
 </Dropdown>
+
+// Dropdown with custom trigger (overrides label)
+const [color, setColor] = useState('#ff0000');
+
+<Dropdown
+  label=""
+  trigger={
+    <div className="color-preview" style={{ backgroundColor: color }}>
+      <Icon name="droplet" className="color-preview-icon" />
+    </div>
+  }
+>
+  <ListItem onClick={() => setColor('#ff0000')}>Red</ListItem>
+  <ListItem onClick={() => setColor('#00ff00')}>Green</ListItem>
+  <ListItem onClick={() => setColor('#0000ff')}>Blue</ListItem>
+</Dropdown>
 ```
 
 **Props:**
 - `children`: Menu items (ListItem components)
 - `label`: Button text
+- `trigger`: Custom ReactNode for the trigger button content (if provided, it replaces `label`)
 - `direction`: 'up' | 'down' | 'left' | 'right'
 - `isOpen`: Controlled open state
 - `onToggle`: Open state change callback
@@ -850,6 +867,8 @@ const colorValidator = new ValidatorControl([
 - `leftIcon`: Left icon name
 - `onChange`: Color change callback
 - All standard input and validation props
+
+Note: The color picker dropdown now shows the selected color directly in its trigger (no separate preview button).
 
 ### NumberInput
 
@@ -2142,6 +2161,86 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 ### From Other Frameworks
 
 FCStyle's prop-based system is similar to styled-components but with better performance through CSS classes.
+
+## Editor Components
+
+### SourceSample
+
+Component para exibição de códigos exemplos com syntax highlighting e botão de cópia.
+
+```tsx
+import SourceSample from './components/SourceSample';
+
+// Exemplo básico
+const codeExample = `import { Button } from 'fcstyle';
+
+<Button one>
+  Click me
+</Button>`;
+
+<SourceSample code={codeExample} />
+
+// Com linguagem específica
+<SourceSample 
+  code={jsCode} 
+  language="javascript" 
+/>
+
+// Com classe personalizada
+<SourceSample 
+  code={cssCode} 
+  language="css"
+  className="custom-sample"
+/>
+```
+
+**Props:**
+- `code`: Código a ser exibido (obrigatório)
+- `language`: Linguagem do código (padrão: 'tsx')
+- `className`: Classes CSS adicionais
+
+**Características:**
+- ✅ **Syntax Highlighting**: Destaque automático para keywords, strings e comentários
+- ✅ **Botão de Cópia**: Botão flutuante no canto superior direito para copiar o código
+- ✅ **Feedback Visual**: Ícone muda temporariamente após cópia bem-sucedida
+- ✅ **Navegador Compatível**: Usa a API Clipboard do navegador
+- ✅ **Estilo Integrado**: Usa os mesmos estilos do `.editor-code` existente
+- ✅ **Responsivo**: Layout adaptável com header separado do código
+
+**Exemplo de Uso nas Páginas:**
+```tsx
+import { Button, Columns } from 'fcstyle'
+import SourceSample from '../../components/SourceSample'
+
+const ButtonPage: React.FC = () => {
+  const basicButtonCode = `import { Button, Columns } from 'fcstyle'
+
+<Columns gap m>
+  <Button li="save" one>Cor One</Button>
+  <Button one disabled>Disabled</Button>
+  <Button two href="/">As link</Button>
+  <Button li="star" ri="caret-down" four>Dropdown</Button>
+</Columns>`
+
+  return (
+    <div>
+      <h1>Button Component</h1>
+      <p>O componente Button oferece uma interface flexível para criação de botões.</p>
+      
+      <div className="editor-showcase">
+        <Columns gap m>
+          <Button li="save" one>Cor One</Button>
+          <Button one disabled>Disabled</Button>
+          <Button two href="/">As link</Button>
+          <Button li="star" ri="caret-down" four>Dropdown</Button>
+        </Columns>
+      </div>
+
+      <SourceSample code={basicButtonCode} />
+    </div>
+  )
+}
+```
 
 ## Troubleshooting
 
